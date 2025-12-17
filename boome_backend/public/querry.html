@@ -1,11 +1,71 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Admin – Drivers, Staff & Bus Creation</title>
+
     <style>
-      /* ==============================
-   GLOBAL VARIABLES
-================================ */
+      /* MOBILE-FIRST IMPROVEMENTS */
+      @media (max-width: 600px) {
+        body {
+          padding: 12px;
+        }
+
+        h2 {
+          font-size: 22px;
+          margin-bottom: 18px;
+        }
+
+        h3 {
+          font-size: 18px;
+          margin-bottom: 12px;
+        }
+
+        .box {
+          padding: 16px;
+          border-radius: 14px;
+          margin-bottom: 22px;
+        }
+
+        input,
+        select {
+          padding: 10px;
+          font-size: 14px;
+          margin: 6px 0;
+        }
+
+        button {
+          padding: 11px;
+          font-size: 14px;
+          margin-top: 10px;
+        }
+
+        #driverResult {
+          font-size: 13px;
+          padding: 10px;
+        }
+
+        input[type="file"] {
+          padding: 8px;
+        }
+      }
+
+      /* EXTRA SMALL DEVICES (iPhone SE, older Android) */
+      @media (max-width: 380px) {
+        h2 {
+          font-size: 20px;
+        }
+
+        .box {
+          padding: 14px;
+        }
+
+        button {
+          font-size: 13px;
+        }
+      }
+
       :root {
         --primary: #0d6efd;
         --primary-dark: #0b5ed7;
@@ -23,21 +83,14 @@
         box-sizing: border-box;
       }
 
-      /* ==============================
-   BODY
-================================ */
       body {
-        font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
-          sans-serif;
+        font-family: "Segoe UI", system-ui, sans-serif;
         background: linear-gradient(135deg, #eef2f7, #e2e8f0);
-        color: var(--text);
-        padding: 30px;
+        padding: 20px;
         min-height: 100vh;
+        color: var(--text);
       }
 
-      /* ==============================
-   HEADINGS
-================================ */
       h2 {
         text-align: center;
         margin-bottom: 25px;
@@ -49,19 +102,15 @@
         color: #0f172a;
       }
 
-      /* ==============================
-   INPUTS / SELECTS
-================================ */
       input,
       select {
         width: 100%;
-        padding: 12px 14px;
+        padding: 12px;
         margin: 8px 0;
         border-radius: 10px;
         border: 1px solid var(--border);
         font-size: 14px;
         background: white;
-        outline: none;
       }
 
       input:focus,
@@ -69,15 +118,11 @@
         border-color: var(--primary);
       }
 
-      /* readonly field */
       input[readonly] {
         background: #f8fafc;
         color: var(--muted);
       }
 
-      /* ==============================
-   BUTTONS
-================================ */
       button {
         width: 100%;
         padding: 12px;
@@ -89,7 +134,7 @@
         font-size: 15px;
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.2s ease, transform 0.15s ease;
+        transition: 0.2s ease;
       }
 
       button:hover {
@@ -97,29 +142,16 @@
         transform: translateY(-1px);
       }
 
-      /* ==============================
-   BOX (CARD STYLE)
-================================ */
       .box {
         max-width: 520px;
         margin: 0 auto 30px auto;
         background: var(--card);
-        padding: 25px 30px;
+        padding: 25px;
         border-radius: 18px;
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
       }
 
-      /* ==============================
-   ADMIN AREA
-================================ */
-      #adminArea {
-        margin-top: 40px;
-      }
-
-      /* ==============================
-   DRIVER RESULT
-================================ */
       #driverResult {
         margin-top: 15px;
         padding: 12px;
@@ -129,55 +161,74 @@
         font-size: 14px;
       }
 
-      #driverResult p {
-        margin: 5px 0;
-      }
-
-      /* ==============================
-   FILE INPUT
-================================ */
       input[type="file"] {
         padding: 10px;
         border: 1px dashed var(--border);
         background: #f8fafc;
-        cursor: pointer;
       }
 
-      /* ==============================
-   HIDDEN
-================================ */
       .hidden {
         display: none;
       }
 
-      /* ==============================
-   LINKS
-================================ */
       a {
         display: block;
         text-align: center;
         margin-top: 30px;
         font-weight: 600;
         color: var(--primary);
-        text-decoration: none;
       }
 
-      a:hover {
-        text-decoration: underline;
-      }
-
-      /* ==============================
-   SMALL SCREENS
-================================ */
+      /* MOBILE */
       @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
         .box {
-          padding: 20px;
+          padding: 18px;
+        }
+      }
+
+      /* LOADER OVERLAY */
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(3px);
+        z-index: 9999;
+        display: none;
+      }
+
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid #ddd;
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
       }
     </style>
   </head>
+
   <body>
+    <div id="loader">
+      <div class="spinner"></div>
+    </div>
+
     <h2>Admin Login</h2>
+
     <div class="box">
       <input id="email" placeholder="Admin Email" />
       <input id="password" type="password" placeholder="Password" />
@@ -185,18 +236,15 @@
     </div>
 
     <div id="adminArea" class="hidden">
-      <!-- 👤 CREATE DRIVER -->
       <div class="box">
         <h3>Create Driver</h3>
         <input id="dname" placeholder="Driver Name" />
         <input id="demail" placeholder="Driver Email" />
         <input id="dpassword" placeholder="Temp Password" />
         <button onclick="createDriver()">Create Driver</button>
-
         <div id="driverResult"></div>
       </div>
 
-      <!-- 👥 CREATE STAFF -->
       <div class="box">
         <h3>Create Staff</h3>
         <input id="sname" placeholder="Staff Name" />
@@ -205,9 +253,8 @@
         <button onclick="createStaff()">Create Staff</button>
       </div>
 
-      <!-- 🚌 CREATE BUS -->
       <div class="box">
-        <h3>Create Bus (Driver must exist)</h3>
+        <h3>Create Bus</h3>
 
         <input id="driverId" placeholder="Driver ID" readonly />
         <input id="busname" placeholder="Bus Name" />
@@ -234,13 +281,22 @@
         <button onclick="createBus()">Create Bus</button>
       </div>
     </div>
-    <a href="index.html">indeex</a>
+
+    <a href="index.html">index</a>
 
     <script>
       let token = "";
 
-      /* 🔐 LOGIN */
+      function showLoader() {
+        loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        loader.style.display = "none";
+      }
+
       async function login() {
+        showLoader();
         const res = await fetch("/admin/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -251,14 +307,17 @@
         });
 
         const data = await res.json();
-        token = data.token;
-        if (!token) return alert("Login failed");
+        hideLoader();
 
+        if (!data.token) return alert(data.message);
+
+        token = data.token;
         adminArea.classList.remove("hidden");
       }
 
-      /* 👤 CREATE DRIVER */
       async function createDriver() {
+        showLoader();
+
         const res = await fetch("/admin/driver/register", {
           method: "POST",
           headers: {
@@ -273,26 +332,25 @@
         });
 
         const data = await res.json();
+        hideLoader();
 
-        /* 👇 HANDLE ERROR RESPONSE */
         if (!res.ok) {
-          alert(data.message || data.error || "Driver creation failed");
-          console.log("ERROR RESPONSE:", data);
+          alert(data.message || "Driver creation failed");
           return;
         }
 
-        /* ✅ SUCCESS PATH */
         driverId.value = data.newDriver.id;
 
         driverResult.innerHTML = `
-  <p><b>ID:</b> ${data.newDriver.id}</p>
-  <p><b>Name:</b> ${data.newDriver.name}</p>
-  <p><b>Email:</b> ${data.newDriver.email}</p>
-`;
+          <p><b>ID:</b> ${data.newDriver.id}</p>
+          <p><b>Name:</b> ${data.newDriver.name}</p>
+          <p><b>Email:</b> ${data.newDriver.email}</p>
+        `;
       }
 
-      /* 👥 CREATE STAFF */
       async function createStaff() {
+        showLoader();
+
         await fetch("/admin/staff/register", {
           method: "POST",
           headers: {
@@ -307,13 +365,14 @@
           }),
         });
 
+        hideLoader();
         alert("Staff created");
       }
 
-      /* 🚌 CREATE BUS */
       async function createBus() {
-        const form = new FormData();
+        showLoader();
 
+        const form = new FormData();
         form.append("Busname", busname.value);
         form.append("bus_no", busno.value);
         form.append("from", from.value);
@@ -331,8 +390,11 @@
           body: form,
         });
 
-        if (!res.ok) return alert("Bus creation failed");
-        alert("Bus created successfully");
+        hideLoader();
+        const data = await res.json();
+        if (!res.ok) return alert(data.message || "failed");
+
+        alert(data.message || "Bus created successfully");
       }
     </script>
   </body>

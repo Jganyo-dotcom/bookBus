@@ -57,7 +57,7 @@ const registerNewStaff = async (req, res) => {
   // find email is existing
   const existing_user = await UserSchema.findOne(value.email);
   if (existing_user) {
-    return res.status(400).json({ mesage: "email already exist" });
+    return res.status(400).json({ message: "email already exist" });
   }
 
   try {
@@ -210,7 +210,7 @@ const registerNewDriver = async (req, res) => {
   // find email is existing
   const existing_user = await DriversSchema.findOne({ email: value.email });
   if (existing_user) {
-    return res.status(400).json({ mesage: "email already exist" });
+    return res.status(400).json({ message: "email already exist" });
   }
 
   try {
