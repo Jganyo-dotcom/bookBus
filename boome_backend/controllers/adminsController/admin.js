@@ -22,8 +22,7 @@ const LoginAdmin = async (req, res) => {
     return res.status(404).json({ message: "user not found" });
   }
   const tryingToLoginAdmins = await UserSchema.find({ email: value.email });
-  //compare passwords and login
-  console.log(value.password);
+  //compare password
   console.log(tryingToLoginAdmin.password);
   const compare_passwords = await bcrypt.compare(
     value.password,
