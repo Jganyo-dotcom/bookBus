@@ -250,6 +250,59 @@
       a:hover {
         text-decoration: underline;
       }
+
+      /* ==============================
+   MOBILE RESPONSIVE TABLE
+================================ */
+      @media (max-width: 768px) {
+        table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+          border-radius: 12px;
+        }
+
+        th,
+        td {
+          padding: 10px;
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        th,
+        td {
+          padding: 8px;
+          font-size: 12px;
+        }
+      }
+
+      /* ==============================
+   RESPONSIVE MODALS
+================================ */
+      .modal-content {
+        width: 90%;
+        max-width: 380px;
+        padding: 22px;
+      }
+
+      @media (max-width: 480px) {
+        .modal-content {
+          padding: 18px;
+          border-radius: 12px;
+        }
+
+        .modal-content h3 {
+          font-size: 18px;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content button {
+          font-size: 14px;
+          padding: 10px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -275,7 +328,7 @@
       <input id="driverSearch" placeholder="Search Driver Name" />
       <button onclick="searchByDriver()">Search</button>
 
-      <table>
+      <table id="make">
         <thead>
           <tr>
             <th>Bus</th>
