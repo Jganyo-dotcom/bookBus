@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Viewport for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Bus Control</title>
+    <style>
+      /* ==============================
+   GLOBAL RESET & VARIABLES
+================================ */
+      :root {
+        --primary: #0d6efd;
+        --secondary: #0b5ed7;
+        --danger: #dc3545;
+        --success: #198754;
+        --dark: #1f2933;
+        --light: #f8fafc;
+        --border: #e5e7eb;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      /* ==============================
+   BODY
+================================ */
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+        color: #1e293b;
+        padding: 30px;
+        min-height: 100vh;
+      }
+
+      /* ==============================
+   LOGIN BOX
+================================ */
+      #loginBox {
+        max-width: 420px;
+        margin: 100px auto;
+        background: white;
+        padding: 35px;
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      #loginBox h2 {
+        margin-bottom: 20px;
+        color: var(--dark);
+      }
+
+      #loginBox input {
+        width: 100%;
+        padding: 12px 14px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        font-size: 15px;
+      }
+
+      #loginBox button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border-radius: 8px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.1s ease;
+      }
+
+      #loginBox button:hover {
+        background: var(--secondary);
+        transform: translateY(-1px);
+      }
+
+      /* ==============================
+   DASHBOARD
+================================ */
+      #dashboard {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      #dashboard h2 {
+        margin-bottom: 20px;
+        color: var(--dark);
+      }
+
+      /* ==============================
+   INPUTS & BUTTONS
+================================ */
+      input,
+      select {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+        outline: none;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+      }
+
+      button {
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.1s ease;
+      }
+
+      button:hover {
+        background: var(--secondary);
+        transform: translateY(-1px);
+      }
+
+      /* Delete buttons */
+      button[onclick*="Delete"] {
+        background: var(--danger);
+      }
+
+      button[onclick*="Delete"]:hover {
+        background: #bb2d3b;
+      }
+
+      /* ==============================
+   TABLE
+================================ */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      thead {
+        background: var(--dark);
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 14px;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+      }
+
+      tbody tr:hover {
+        background: #f8fafc;
+      }
+
+      /* ==============================
+   MODALS (UPDATE & DELETE)
+================================ */
+      .modal,
+      .modall {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.65);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 30px;
+        width: 420px;
+        max-width: 90%;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.25s ease;
+      }
+
+      .modal-content h3 {
+        margin-bottom: 15px;
+        color: var(--dark);
+      }
+
+      .modal-content label {
+        display: block;
+        margin-top: 12px;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      .modal-content input,
+      .modal-content select {
+        width: 100%;
+      }
+
+      .modal-content button {
+        margin-top: 15px;
+      }
+
+      /* ==============================
+   HIDDEN
+================================ */
+      .hidden {
+        display: none;
+      }
+
+      /* ==============================
+   ANIMATIONS
+================================ */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ==============================
+   LINKS
+================================ */
+      a {
+        display: inline-block;
+        margin-top: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 🔐 LOGIN -->
+    <div id="loginBox">
+      <h2>Admin Login</h2>
+      <input type="email" id="email" placeholder="Email" /><br />
+      <input type="password" id="password" placeholder="Password" /><br />
+      <button onclick="login()">Login</button>
+    </div>
+
+    <!-- 📊 DASHBOARD -->
+    <div id="dashboard" class="hidden">
+      <h2>Admin Dashboard</h2>
+
+      <button onclick="fetchAllBuses()">Query All Buses</button>
+
+      <br /><br />
+
+      <input id="busNoSearch" placeholder="Search Bus Number" />
+      <button onclick="searchByBusNo()">Search</button>
+
+      <input id="driverSearch" placeholder="Search Driver Name" />
+      <button onclick="searchByDriver()">Search</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Bus</th>
+            <th>Number</th>
+            <th>Route</th>
+            <th>Driver</th>
+            <th>Boarding</th>
+            <th>Time</th>
+            <th>Terminal</th>
+            <th>Action</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="busTable"></tbody>
+      </table>
+    </div>
+
+    <!-- 🪟 MODAL -->
+    <div id="modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Update Boarding</h3>
+
+        <button onclick="toggleBoarding()">Toggle Boarding</button>
+        <p id="boardingStatus"></p>
+
+        <label>Terminal</label>
+        <select id="terminal">
+          <option>terminal 1</option>
+          <option>terminal 2</option>
+          <option>terminal 3</option>
+          <option>terminal 4</option>
+          <option>terminal 5</option>
+          <option>terminal 6</option>
+          <option>terminal 7</option>
+        </select>
+
+        <label>Section</label>
+        <select id="section">
+          <option>morning</option>
+          <option>afternoon</option>
+          <option>evening</option>
+          <option>night</option>
+        </select>
+
+        <label>Time Boarding</label>
+        <input id="timeBoarding" placeholder="e.g 3pm" />
+
+        <br /><br />
+        <button onclick="submitUpdate()">Update</button>
+        <button onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+
+    <!-------------------------------------------->
+    <!-- 🪟 MODAL -->
+    <div id="modall" class="modal hidden">
+      <div class="modal-content">
+        <h3>Delete Bus</h3>
+        <button onclick="submitDelete()">Delete</button>
+        <button onclick="closeModall()">Cancel</button>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------>
+    <a href="querry.html">querry</a>
+
+    <script>
+      let token = "";
+      let selectedBusId = "";
+      let boardingValue = false;
+
+      /* 🔐 LOGIN */
+      async function login() {
+        const res = await fetch("/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email.value,
+            password: password.value,
+          }),
+        });
+
+        const data = await res.json();
+        token = data.token;
+
+        if (!token) return alert("Login failed");
+
+        loginBox.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+      }
+
+      /* 🚍 FETCH ALL */
+      async function fetchAllBuses() {
+        fetchBuses("/admin/Admin/buses");
+      }
+
+      /* 🔍 SEARCH */
+      function searchByBusNo() {
+        fetchBuses(`/bus/bus-number?number=${busNoSearch.value}`);
+      }
+      function searchByDriver() {
+        fetchBuses(`/admin/driver?name=${driverSearch.value}`);
+      }
+
+      /* 📡 FETCH */
+      async function fetchBuses(url) {
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await res.json();
+
+        // Normalize data to always be an array
+        let busesArray = [];
+        if (Array.isArray(data.allbuses)) {
+          busesArray = data.allbuses;
+        } else if (Array.isArray(data.buses)) {
+          busesArray = data.buses;
+        } else if (data.bus) {
+          // single bus returned as object, wrap in array
+          busesArray = [data.bus];
+        }
+
+        render(busesArray);
+      }
+
+      /* 🖥️ RENDER */
+      function render(buses) {
+        busTable.innerHTML = "";
+        buses.forEach((b) => {
+          busTable.innerHTML += `
+      <tr>
+        <td>${b.Busname}</td>
+        <td>${b.bus_no}</td>
+        <td>${b.from} → ${b.to}</td>
+        <td>${b.Driver?.name}</td>
+        <td>${b.Boarding}</td>
+        <td>${b.Time_Boarding}</td>
+        <td>${b.terminal}</td>
+        <td>
+          <button onclick="openModal('${b._id}', ${b.Boarding})">
+              Update to Board
+            </button>
+        </td>
+        <td>
+          <button onclick="openModalondelete('${b._id}')">
+              Delete
+            </button>
+        </td>
+      </tr>
+    `;
+        });
+      }
+
+      /* 🪟 MODAL */
+      function openModal(id, boarding) {
+        selectedBusId = id;
+        boardingValue = boarding;
+        document.getElementById(
+          "boardingStatus"
+        ).innerText = `Boarding: ${boarding}`;
+        document.getElementById("modal").classList.remove("hidden");
+      }
+
+      /* 🪟 DeleteMODAL */
+      function openModalondelete(id) {
+        selectedBusId = id;
+        document.getElementById("modall").classList.remove("hidden");
+      }
+
+      function closeModal() {
+        document.getElementById("modal").classList.add("hidden");
+      }
+      function closeModall() {
+        document.getElementById("modall").classList.add("hidden");
+      }
+
+      function toggleBoarding() {
+        boardingValue = !boardingValue;
+        boardingStatus.innerText = `Boarding: ${boardingValue}`;
+      }
+
+      /* ✅ UPDATE */
+      async function submitUpdate() {
+        const payload = {
+          Boarding: boardingValue,
+          terminal: terminal.value,
+          section: section.value,
+          Time_Boarding: timeBoarding.value,
+        };
+
+        const res = await fetch(`/bus/boarding/${selectedBusId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) return alert("Update failed");
+
+        alert("Bus updated successfully");
+        closeModal();
+        fetchAllBuses();
+      }
+
+      /* ✅ Delete */
+      async function submitDelete() {
+        const res = await fetch(`/bus/delete/${selectedBusId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          data = await res.json();
+          alert(data.message);
+        }
+
+        data = await res.json();
+        alert(data.message);
+        closeModall();
+        fetchBuses("/admin/Admin/buses");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,111 @@
+const { request } = require("express");
+const BusSchema = require("../../modules/addBus");
+const {
+  validateaddingBus,
+  validateBoardingBus,
+} = require("../../validations/adminValidations/admin");
+
+const add_Bus = async (req, res) => {
+  console.log("fired");
+  const { error, value } = validateaddingBus.validate(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+  const existing_bus = await BusSchema.findById(value.driver);
+  // find bus no is existing
+  console.log("fired");
+  if (existing_bus) {
+    return res.status(400).json({ mesage: "bus already exist" });
+  }
+  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+  console.log(imageUrl);
+  try {
+    const newbus = BusSchema({
+      Driver: value.Driver,
+      Busname: value.Busname,
+      from: value.from,
+      to: value.to,
+      seats: value.seats,
+      bus_no: value.bus_no,
+      imageUrl: imageUrl,
+      type: value.type,
+      Boarding: value.Boarding,
+      terminal: value.terminal,
+      date: value.date,
+      Time_Boarding: value.Time_Boarding,
+      section: value.section,
+    });
+    await newbus.save();
+    res.status(201).json({ message: "Bus has been created" }, newbus);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "something went wrong while saving bus" });
+  }
+};
+
+const deleteBus = async (req, res) => {
+  const id = req.params.id;
+  const bus_exists = await BusSchema.findById(id);
+  if (!bus_exists) return res.status(404).json({ message: "bus not found" });
+  try {
+    const deletebus = await BusSchema.findByIdAndDelete(id);
+    res.status(201).json({ message: "deleted bus" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "something went wrong while deleting bus" });
+  }
+};
+
+//request for all buses
+const allbuses = async (req, res) => {
+  try {
+    console.log("bus");
+    const allbuses = await BusSchema.find({}).populate("Driver", "name email");
+    res.status(200).json({ message: "success", allbuses });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "something went wrong" });
+  }
+};
+
+const Bus_Boarding = async (req, res) => {
+  console.log(req.params.id);
+  const Bus_id = req.params.id;
+  const { error, value } = validateBoardingBus.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const existing_bus = await BusSchema.findById(Bus_id);
+    // find bus no is existing
+    if (!existing_bus) {
+      return res.status(404).json({ mesage: "bus not found" });
+    }
+    const Board = await BusSchema.findByIdAndUpdate(Bus_id, value, {
+      new: true,
+      runValidators: true,
+    });
+    return res.status(200).json({ message: "Success" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
+  }
+};
+
+const queryBus = async (req, res) => {
+  const BusNo = req.query.number;
+  console.log(BusNo);
+  try {
+    const allbuses = await BusSchema.find({ bus_no: BusNo }).populate(
+      "Driver",
+      "name email"
+    );
+    if (!allbuses) {
+      return res.status(404).json({ mesage: "bus not found" });
+    }
+    return res.status(200).json({ mesage: "success", allbuses });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
+  }
+};
+
+module.exports = { add_Bus, deleteBus, allbuses, Bus_Boarding, queryBus };

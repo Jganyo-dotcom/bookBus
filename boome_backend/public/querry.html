@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin – Drivers, Staff & Bus Creation</title>
+    <style>
+      /* ==============================
+   GLOBAL VARIABLES
+================================ */
+      :root {
+        --primary: #0d6efd;
+        --primary-dark: #0b5ed7;
+        --success: #198754;
+        --danger: #dc3545;
+        --bg: #f1f5f9;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --text: #1f2933;
+        --muted: #64748b;
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      /* ==============================
+   BODY
+================================ */
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(135deg, #eef2f7, #e2e8f0);
+        color: var(--text);
+        padding: 30px;
+        min-height: 100vh;
+      }
+
+      /* ==============================
+   HEADINGS
+================================ */
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #0f172a;
+      }
+
+      h3 {
+        margin-bottom: 15px;
+        color: #0f172a;
+      }
+
+      /* ==============================
+   INPUTS / SELECTS
+================================ */
+      input,
+      select {
+        width: 100%;
+        padding: 12px 14px;
+        margin: 8px 0;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+        background: white;
+        outline: none;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+      }
+
+      /* readonly field */
+      input[readonly] {
+        background: #f8fafc;
+        color: var(--muted);
+      }
+
+      /* ==============================
+   BUTTONS
+================================ */
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 12px;
+        border-radius: 10px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.15s ease;
+      }
+
+      button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      /* ==============================
+   BOX (CARD STYLE)
+================================ */
+      .box {
+        max-width: 520px;
+        margin: 0 auto 30px auto;
+        background: var(--card);
+        padding: 25px 30px;
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+      }
+
+      /* ==============================
+   ADMIN AREA
+================================ */
+      #adminArea {
+        margin-top: 40px;
+      }
+
+      /* ==============================
+   DRIVER RESULT
+================================ */
+      #driverResult {
+        margin-top: 15px;
+        padding: 12px;
+        background: #f8fafc;
+        border-left: 4px solid var(--success);
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      #driverResult p {
+        margin: 5px 0;
+      }
+
+      /* ==============================
+   FILE INPUT
+================================ */
+      input[type="file"] {
+        padding: 10px;
+        border: 1px dashed var(--border);
+        background: #f8fafc;
+        cursor: pointer;
+      }
+
+      /* ==============================
+   HIDDEN
+================================ */
+      .hidden {
+        display: none;
+      }
+
+      /* ==============================
+   LINKS
+================================ */
+      a {
+        display: block;
+        text-align: center;
+        margin-top: 30px;
+        font-weight: 600;
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* ==============================
+   SMALL SCREENS
+================================ */
+      @media (max-width: 600px) {
+        .box {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Admin Login</h2>
+    <div class="box">
+      <input id="email" placeholder="Admin Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="adminArea" class="hidden">
+      <!-- 👤 CREATE DRIVER -->
+      <div class="box">
+        <h3>Create Driver</h3>
+        <input id="dname" placeholder="Driver Name" />
+        <input id="demail" placeholder="Driver Email" />
+        <input id="dpassword" placeholder="Temp Password" />
+        <button onclick="createDriver()">Create Driver</button>
+
+        <div id="driverResult"></div>
+      </div>
+
+      <!-- 👥 CREATE STAFF -->
+      <div class="box">
+        <h3>Create Staff</h3>
+        <input id="sname" placeholder="Staff Name" />
+        <input id="semail" placeholder="Staff Email" />
+        <input id="spassword" placeholder="Temp Password" />
+        <button onclick="createStaff()">Create Staff</button>
+      </div>
+
+      <!-- 🚌 CREATE BUS -->
+      <div class="box">
+        <h3>Create Bus (Driver must exist)</h3>
+
+        <input id="driverId" placeholder="Driver ID" readonly />
+        <input id="busname" placeholder="Bus Name" />
+        <input id="busno" placeholder="Bus Number" />
+        <input id="from" placeholder="From" />
+        <input id="to" placeholder="To" />
+
+        <select id="section">
+          <option>morning</option>
+          <option>afternoon</option>
+          <option>evening</option>
+        </select>
+
+        <input id="seats" type="number" placeholder="Seats" />
+
+        <select id="type">
+          <option>luxury</option>
+          <option>standard</option>
+          <option>economy</option>
+        </select>
+
+        <input type="file" id="image" />
+
+        <button onclick="createBus()">Create Bus</button>
+      </div>
+    </div>
+    <a href="index.html">indeex</a>
+
+    <script>
+      let token = "";
+
+      /* 🔐 LOGIN */
+      async function login() {
+        const res = await fetch("/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email.value,
+            password: password.value,
+          }),
+        });
+
+        const data = await res.json();
+        token = data.token;
+        if (!token) return alert("Login failed");
+
+        adminArea.classList.remove("hidden");
+      }
+
+      /* 👤 CREATE DRIVER */
+      async function createDriver() {
+        const res = await fetch("/admin/driver/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: dname.value,
+            email: demail.value,
+            password: dpassword.value,
+          }),
+        });
+
+        const data = await res.json();
+
+        /* 👇 HANDLE ERROR RESPONSE */
+        if (!res.ok) {
+          alert(data.message || data.error || "Driver creation failed");
+          console.log("ERROR RESPONSE:", data);
+          return;
+        }
+
+        /* ✅ SUCCESS PATH */
+        driverId.value = data.newDriver.id;
+
+        driverResult.innerHTML = `
+  <p><b>ID:</b> ${data.newDriver.id}</p>
+  <p><b>Name:</b> ${data.newDriver.name}</p>
+  <p><b>Email:</b> ${data.newDriver.email}</p>
+`;
+      }
+
+      /* 👥 CREATE STAFF */
+      async function createStaff() {
+        await fetch("/admin/staff/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: sname.value,
+            email: semail.value,
+            password: spassword.value,
+            role: "staff",
+          }),
+        });
+
+        alert("Staff created");
+      }
+
+      /* 🚌 CREATE BUS */
+      async function createBus() {
+        const form = new FormData();
+
+        form.append("Busname", busname.value);
+        form.append("bus_no", busno.value);
+        form.append("from", from.value);
+        form.append("to", to.value);
+        form.append("section", section.value);
+        form.append("seats", seats.value);
+        form.append("type", type.value);
+        form.append("terminal", "N/A");
+        form.append("Driver", driverId.value);
+        form.append("image", image.files[0]);
+
+        const res = await fetch("/bus/add-bus", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: form,
+        });
+
+        if (!res.ok) return alert("Bus creation failed");
+        alert("Bus created successfully");
+      }
+    </script>
+  </body>
+</html>
