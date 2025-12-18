@@ -380,7 +380,11 @@
             <th>Driver</th>
             <th>Boarding</th>
             <th>Time</th>
+            <th>Date</th>
             <th>Terminal</th>
+            <th>Type</th>
+            <th>section</th>
+            <th>seats</th>
             <th>Action</th>
             <th>Delete</th>
           </tr>
@@ -522,7 +526,6 @@
           document.getElementById("loader").classList.add("hidden");
         }
       }
-
       /* 🖥️ RENDER */
       function render(buses) {
         busTable.innerHTML = "";
@@ -535,7 +538,11 @@
         <td>${b.Driver?.name}</td>
         <td>${b.Boarding}</td>
         <td>${b.Time_Boarding}</td>
+        <td>${b.date}</td>
         <td>${b.terminal}</td>
+        <td>${b.type}</td>
+        <td>${b.section}</td>
+        <td>${b.seats}</td>
         <td>
           <button onclick="openModal('${b._id}', ${b.Boarding})">
               Update to Board

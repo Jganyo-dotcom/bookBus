@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BookBus – User Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      :root {
+        --primary: #0d6efd;
+        --primary-dark: #0b5ed7;
+        --bg: #f1f5f9;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --text: #0f172a;
+        --muted: #64748b;
+        --shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+        --danger: #dc3545;
+        --success: #198754;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+        color: var(--text);
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0 0 12px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 26px;
+      }
+
+      p {
+        margin: 0 0 8px;
+      }
+
+      a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .card-header h2 {
+        font-size: 20px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #f8fafc;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .tab-btn.active {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary-dark);
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 11px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        margin: 6px 0 12px;
+        font-size: 14px;
+        outline: none;
+        background: #fff;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+      }
+
+      button {
+        padding: 11px 16px;
+        border-radius: 10px;
+        border: none;
+        background: var(--primary);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.15s ease;
+      }
+
+      button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-outline {
+        background: #fff;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .small {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .error-text {
+        color: var(--danger);
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .success-text {
+        color: var(--success);
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      /* GRID FOR BUS CARDS */
+      .bus-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .bus-card {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        transition: 0.15s ease;
+      }
+
+      .bus-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      .bus-image {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        background: #e5e7eb;
+      }
+
+      .bus-body {
+        padding: 8px 10px 10px;
+      }
+
+      .bus-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+
+      .bus-meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* BOOKINGS LIST */
+      .booking-item {
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .badge {
+        padding: 3px 7px;
+        border-radius: 999px;
+        font-size: 11px;
+      }
+
+      .badge.pending {
+        background: rgba(220, 53, 69, 0.08);
+        color: var(--danger);
+      }
+
+      .badge.confirmed {
+        background: rgba(25, 135, 84, 0.08);
+        color: var(--success);
+      }
+
+      /* MODAL */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+      }
+
+      .modal {
+        max-width: 420px;
+        width: 90%;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 18px 18px 16px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .modal-header h3 {
+        font-size: 18px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      /* LOADER */
+      #loader {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.75);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(2px);
+      }
+
+      .spinner {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: 5px solid #d1d5db;
+        border-top-color: var(--primary);
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        body {
+          padding: 14px;
+        }
+
+        h1 {
+          font-size: 22px;
+        }
+
+        .card {
+          padding: 16px;
+        }
+
+        .bus-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+        }
+
+        h1 {
+          font-size: 20px;
+        }
+
+        .bus-grid {
+          grid-template-columns: 1fr;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        .modal {
+          padding: 16px 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="loader">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="container">
+      <h1>BookBus – Find & Book Your Ride</h1>
+
+      <!-- AUTH CARD -->
+      <div class="card" id="authCard">
+        <div class="card-header">
+          <h2>Account</h2>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" id="loginTab">Login</button>
+          <button class="tab-btn" id="registerTab">Register</button>
+        </div>
+
+        <div id="authError" class="error-text" style="display: none"></div>
+        <div id="authSuccess" class="success-text" style="display: none"></div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+          <input id="loginEmail" type="email" placeholder="Email" />
+          <input
+            id="loginPassword"
+            type="password"
+            placeholder="Password"
+            autocomplete="current-password"
+          />
+          <button onclick="handleLogin()">Login</button>
+          <p class="small" style="margin-top: 10px">
+            New here?
+            <a href="javascript:void(0)" onclick="switchToRegister()"
+              >Create an account</a
+            >
+          </p>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" style="display: none">
+          <input id="regName" type="text" placeholder="Full Name" />
+          <input id="regEmail" type="email" placeholder="Email" />
+          <input
+            id="regPassword"
+            type="password"
+            placeholder="Password"
+            autocomplete="new-password"
+          />
+          <button onclick="handleRegister()">Register</button>
+          <p class="small" style="margin-top: 10px">
+            Already have an account?
+            <a href="javascript:void(0)" onclick="switchToLogin()">Login</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- BOOKING CARD (HIDDEN UNTIL LOGGED IN) -->
+      <div class="card" id="bookingCard" style="display: none">
+        <div class="card-header">
+          <h2>Book a Bus</h2>
+          <button class="btn-outline" onclick="handleLogout()">Logout</button>
+        </div>
+        <p class="small" style="margin-bottom: 10px">
+          Fill the form to search for available buses.
+        </p>
+
+        <div id="bookingError" class="error-text" style="display: none"></div>
+
+        <input id="bkName" type="text" placeholder="Your Name" />
+
+        <select id="bkFrom">
+          <option value="Accra">Accra</option>
+          <option value="Kumasi">Kumasi</option>
+          <option value="Wa">Wa</option>
+          <option value="Navrongo">Navrongo</option>
+          <option value="Nsawam">Nsawam</option>
+          <option value="Landa">Landa</option>
+          <option value="Hunnu">Hunnu</option>
+          <option value="mardar">mardar</option>
+        </select>
+
+        <select id="bkTo">
+          <option value="Accra">Accra</option>
+          <option value="Kumasi">Kumasi</option>
+          <option value="Wa">Wa</option>
+          <option value="Navrongo">Navrongo</option>
+          <option value="Nsawam">Nsawam</option>
+          <option value="Landa">Landa</option>
+          <option value="Hunnu">Hunnu</option>
+          <option value="mardar">mardar</option>
+        </select>
+        <label class="small">Travel date</label>
+        <input id="bkDate" type="date" />
+
+        <label class="small">Bus type</label>
+        <select id="bkType">
+          <option value="">Any type</option>
+          <option value="luxury">luxury</option>
+          <option value="standard">standard</option>
+          <option value="economy">Economy</option>
+        </select>
+
+        <label class="small">Section</label>
+        <select id="bkSection">
+          <option value="morning">Morning</option>
+          <option value="afternoon">Afternoon</option>
+          <option value="evening">Evening</option>
+        </select>
+
+        <label class="small">Status</label>
+        <select id="bkBoard">
+          <option value="true">Boarding</option>
+          <option value="false">NotBoarding</option>
+        </select>
+
+        <label class="small">size</label>
+        <select id="bkseats">
+          <option value="44">44</option>
+          <option value="55">55</option>
+          <option value="66">66</option>
+          <option value="15">15</option>
+        </select>
+
+        <button onclick="searchBuses()">Search Buses</button>
+
+        <div id="busResults" style="margin-top: 16px; display: none">
+          <h3 style="font-size: 16px; margin-bottom: 8px">Available buses</h3>
+          <div id="busList" class="bus-grid"></div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS CARD -->
+      <div class="card" id="myBookingsCard" style="display: none">
+        <div class="card-header">
+          <h2>My Bookings</h2>
+        </div>
+        <div id="bookingsEmpty" class="small">
+          No bookings yet. Search and book a bus to see it here.
+        </div>
+        <div id="bookingsList"></div>
+      </div>
+    </div>
+
+    <!-- MODAL FOR CONFIRM BOOKING -->
+    <div id="bookingModalBackdrop" class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Confirm Booking</h3>
+          <button class="btn-outline" onclick="closeBookingModal()">X</button>
+        </div>
+        <div id="modalBody" class="small"></div>
+        <div class="modal-footer">
+          <button class="btn-outline" onclick="closeBookingModal()">
+            Cancel
+          </button>
+          <button onclick="confirmBooking()">Book</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL FOR PAY (UI ONLY FOR NOW) -->
+    <div id="payModalBackdrop" class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Pay for Booking</h3>
+          <button class="btn-outline" onclick="closePayModal()">X</button>
+        </div>
+        <div id="payModalBody" class="small"></div>
+        <div class="modal-footer">
+          <button class="btn-outline" onclick="closePayModal()">Close</button>
+          <button onclick="handlePayNow()">Pay now</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let authToken = "";
+      let selectedBus = null;
+      let currentSearchData = null;
+      let bookingToPay = null;
+
+      // UTIL: Loader
+      function showLoader() {
+        document.getElementById("loader").style.display = "flex";
+      }
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+      }
+
+      // AUTH TABS
+      const loginTab = document.getElementById("loginTab");
+      const registerTab = document.getElementById("registerTab");
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const authError = document.getElementById("authError");
+      const authSuccess = document.getElementById("authSuccess");
+
+      function clearAuthMessages() {
+        authError.style.display = "none";
+        authSuccess.style.display = "none";
+      }
+
+      function switchToRegister() {
+        clearAuthMessages();
+        loginTab.classList.remove("active");
+        registerTab.classList.add("active");
+        loginForm.style.display = "none";
+        registerForm.style.display = "block";
+      }
+
+      function switchToLogin() {
+        clearAuthMessages();
+        loginTab.classList.add("active");
+        registerTab.classList.remove("active");
+        loginForm.style.display = "block";
+        registerForm.style.display = "none";
+      }
+
+      // AUTH: Register
+      async function handleRegister() {
+        clearAuthMessages();
+        const name = document.getElementById("regName").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const password = document.getElementById("regPassword").value.trim();
+
+        if (!name || !email || !password) {
+          authError.textContent = "Please fill all fields.";
+          authError.style.display = "block";
+          return;
+        }
+
+        try {
+          showLoader();
+          const res = await fetch("/guest/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password }),
+          });
+          const data = await res.json();
+          hideLoader();
+
+          if (!res.ok) {
+            authError.textContent =
+              data.message || data.error || "Registration failed.";
+            authError.style.display = "block";
+            return;
+          }
+
+          authSuccess.textContent =
+            data.message ||
+            "Registration successful. Please login to continue.";
+
+          authSuccess.style.display = "block";
+          switchToLogin();
+        } catch (err) {
+          hideLoader();
+          authError.textContent = "Network error. Try again.";
+          authError.style.display = "block";
+        }
+      }
+
+      // AUTH: Login
+      async function handleLogin() {
+        clearAuthMessages();
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+
+        if (!email || !password) {
+          authError.textContent = "Please enter email and password.";
+          authError.style.display = "block";
+          return;
+        }
+
+        try {
+          showLoader();
+          const res = await fetch("/guest/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await res.json();
+          hideLoader();
+
+          if (!res.ok || !data.token) {
+            authError.textContent =
+              data.message || "Login failed. Check your credentials.";
+            authError.style.display = "block";
+            return;
+          }
+          data.message;
+          authToken = data.token;
+          localStorage.setItem("userToken", authToken);
+          localStorage.setItem("userName", data.name || "");
+          showBookingUI();
+        } catch (err) {
+          hideLoader();
+          authError.textContent = "Network error. Try again.";
+          authError.style.display = "block";
+        }
+      }
+
+      // LOGOUT
+      function handleLogout() {
+        authToken = "";
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("userName");
+        document.getElementById("bookingCard").style.display = "none";
+        document.getElementById("myBookingsCard").style.display = "none";
+        document.getElementById("authCard").style.display = "block";
+      }
+
+      // SHOW BOOKING UI AFTER LOGIN
+      function showBookingUI() {
+        document.getElementById("authCard").style.display = "none";
+        document.getElementById("bookingCard").style.display = "block";
+        document.getElementById("myBookingsCard").style.display = "block";
+
+        const storedName = localStorage.getItem("userName") || "";
+        if (storedName) {
+          document.getElementById("bkName").value = storedName;
+        }
+
+        loadMyBookings();
+      }
+
+      // ON LOAD: Check token
+      (function init() {
+        const token = localStorage.getItem("userToken");
+        if (token) {
+          authToken = token;
+          showBookingUI();
+        }
+      })();
+
+      // SEARCH BUSES
+      async function searchBuses() {
+        const bookingError = document.getElementById("bookingError");
+        bookingError.style.display = "none";
+
+        const name = document.getElementById("bkName").value.trim();
+        const from = document.getElementById("bkFrom").value.trim();
+        const to = document.getElementById("bkTo").value.trim();
+        const rawDate = document.getElementById("bkDate").value;
+        const date = new Date(rawDate).toISOString().split("T")[0];
+        const type = document.getElementById("bkType").value;
+        const section = document.getElementById("bkSection").value;
+        const Boarding = document.getElementById("bkBoard").value;
+        const seats = document.getElementById("bkseats").value;
+        if (!name || !from || !to || !date || !section) {
+          bookingError.textContent =
+            "Please fill name, from, to, date and section.";
+          bookingError.style.display = "block";
+          return;
+        }
+
+        currentSearchData = { name, from, to, date, type, section };
+
+        try {
+          showLoader();
+          // Adjust endpoint & body to match your backend
+          const res = await fetch("/guest/booking", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              from,
+              to,
+              date,
+              type,
+              section,
+              Boarding,
+              seats,
+            }),
+          });
+
+          const data = await res.json();
+          hideLoader();
+
+          if (!res.ok) {
+            alert(data.message || "NONE");
+            bookingError.textContent = data.message || "Could not fetch buses.";
+            bookingError.style.display = "block";
+            return;
+          }
+          alert(data.message || "NONE");
+          renderBusResults(data.Buses || data.message);
+        } catch (err) {
+          hideLoader();
+          bookingError.textContent = "Network error. Try again.";
+          bookingError.style.display = "block";
+        }
+      }
+
+      function renderBusResults(buses) {
+        const busResults = document.getElementById("busResults");
+        const busList = document.getElementById("busList");
+        busList.innerHTML = "";
+
+        if (!buses.length) {
+          busResults.style.display = "block";
+          busList.innerHTML =
+            '<p class="small">No buses available for that date/section.</p>';
+          return;
+        }
+
+        busResults.style.display = "block";
+
+        buses.forEach((bus) => {
+          const card = document.createElement("div");
+          card.className = "bus-card";
+          card.onclick = () => openBookingModal(bus);
+
+          const img = document.createElement("img");
+          img.className = "bus-image";
+          img.src = bus.imageUrl || bus.image || "";
+          img.alt = bus.Busname || bus.name || "Bus";
+
+          const body = document.createElement("div");
+          body.className = "bus-body";
+
+          const title = document.createElement("div");
+          title.className = "bus-title";
+          title.textContent = bus.Busname || bus.name || "Bus";
+
+          const meta = document.createElement("div");
+          meta.className = "bus-meta";
+          meta.textContent = `${bus.from} → ${bus.to} • ${
+            bus.type || ""
+          } • Seats: ${bus.seats || "N/A"}`;
+
+          body.appendChild(title);
+          body.appendChild(meta);
+          card.appendChild(img);
+          card.appendChild(body);
+          busList.appendChild(card);
+        });
+      }
+
+      // MODAL: Confirm booking
+      function openBookingModal(bus) {
+        selectedBus = bus;
+        const modalBody = document.getElementById("modalBody");
+        const d = currentSearchData;
+
+        modalBody.innerHTML = `
+          <p><b>Bus:</b> ${bus.Busname || bus.name}</p>
+          <p><b>Route:</b> ${bus.from} → ${bus.to}</p>
+          <p><b>Type:</b> ${bus.type || "N/A"}</p>
+          <p><b>Date:</b> ${d.date}</p>
+          <p><b>Section:</b> ${d.section}</p>
+          <p><b>Passenger:</b> ${d.name}</p>
+        `;
+
+        document.getElementById("bookingModalBackdrop").style.display = "flex";
+      }
+
+      function closeBookingModal() {
+        document.getElementById("bookingModalBackdrop").style.display = "none";
+        selectedBus = null;
+      }
+
+      // CONFIRM BOOKING -> BACKEND
+      async function confirmBooking() {
+        if (!selectedBus || !currentSearchData) return;
+
+        const d = currentSearchData;
+
+        try {
+          showLoader();
+          const res = await fetch("/booking/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              busId: selectedBus._id || selectedBus.id,
+              date: d.date,
+              section: d.section,
+              from: d.from,
+              to: d.to,
+              name: d.name,
+            }),
+          });
+          const data = await res.json();
+          hideLoader();
+
+          if (!res.ok) {
+            alert(data.message || "Booking failed.");
+            return;
+          }
+
+          alert("Booking created with status: pending");
+          closeBookingModal();
+          loadMyBookings();
+        } catch (err) {
+          hideLoader();
+          alert("Network error while booking. Try again.");
+        }
+      }
+
+      // LOAD USER BOOKINGS
+      async function loadMyBookings() {
+        const bookingsEmpty = document.getElementById("bookingsEmpty");
+        const bookingsList = document.getElementById("bookingsList");
+        bookingsList.innerHTML = "";
+        bookingsEmpty.style.display = "none";
+
+        try {
+          showLoader();
+          const res = await fetch("/booking/my-bookings", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+          const data = await res.json();
+          hideLoader();
+
+          if (!res.ok) {
+            bookingsEmpty.textContent =
+              data.message || "Could not load bookings.";
+            bookingsEmpty.style.display = "block";
+            return;
+          }
+
+          const bookings = data.bookings || [];
+
+          if (!bookings.length) {
+            bookingsEmpty.textContent =
+              "No bookings yet. Search and book a bus.";
+            bookingsEmpty.style.display = "block";
+            return;
+          }
+
+          bookings.forEach((b) => {
+            const item = document.createElement("div");
+            item.className = "booking-item";
+
+            const left = document.createElement("div");
+            left.innerHTML = `
+              <div style="font-size:13px;font-weight:600;">
+                ${b.bus?.Busname || b.busName || "Bus"}
+              </div>
+              <div class="small">
+                ${b.from} → ${b.to} • ${b.date} • ${b.section}
+              </div>
+            `;
+
+            const right = document.createElement("div");
+            right.style.textAlign = "right";
+
+            const badge = document.createElement("span");
+            badge.className =
+              "badge " + (b.status === "confirmed" ? "confirmed" : "pending");
+            badge.textContent = b.status || "pending";
+
+            right.appendChild(badge);
+
+            if (b.status === "pending") {
+              const payBtn = document.createElement("button");
+              payBtn.textContent = "Pay";
+              payBtn.style.marginTop = "6px";
+              payBtn.onclick = () => openPayModal(b);
+              right.appendChild(payBtn);
+            }
+
+            item.appendChild(left);
+            item.appendChild(right);
+            bookingsList.appendChild(item);
+          });
+        } catch (err) {
+          hideLoader();
+          bookingsEmpty.textContent = "Network error while loading bookings.";
+          bookingsEmpty.style.display = "block";
+        }
+      }
+
+      // PAY MODAL (UI-ready, backend/paystack later)
+      function openPayModal(booking) {
+        bookingToPay = booking;
+        const body = document.getElementById("payModalBody");
+        body.innerHTML = `
+          <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
+          <p><b>Bus:</b> ${booking.bus?.Busname || booking.busName}</p>
+          <p><b>Date:</b> ${booking.date}</p>
+          <p><b>Section:</b> ${booking.section}</p>
+          <p style="margin-top:8px;">
+            When payment is integrated, this will open Paystack and, on success, update the status to <b>confirmed</b>.
+          </p>
+        `;
+        document.getElementById("payModalBackdrop").style.display = "flex";
+      }
+
+      function closePayModal() {
+        document.getElementById("payModalBackdrop").style.display = "none";
+        bookingToPay = null;
+      }
+
+      // PAY HANDLER (placeholder, ready for Paystack wiring)
+      async function handlePayNow() {
+        if (!bookingToPay) return;
+
+        alert(
+          "Payment flow (Paystack) will be wired here. Booking stays pending until backend marks it confirmed."
+        );
+        closePayModal();
+
+        // Later: call backend e.g. /payment/init or similar
+        // then reload bookings: loadMyBookings();
+      }
+    </script>
+  </body>
+</html>

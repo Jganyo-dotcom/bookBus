@@ -2,6 +2,7 @@ const {
   validationForRegisterSchema,
   validationForLogin,
   validationForBookingSchema,
+  validateBookingBus,
 } = require("../validations/user");
 const Joi = require("joi");
 const UserSchema = require("../modules/users.module");
@@ -108,6 +109,40 @@ const AlreadyBookedseats = async (req, res) => {
   }
 };
 
+const availableBuses = async (req, res) => {
+  try {
+    const { error, value } = validateBookingBus.validate(req.body);
+    if (error)
+      return res.status(400).json({ message: error.details[0].message });
+    if (value.Boarding === "true") {
+      const Boarding = true;
+    } else {
+      Boarding = false;
+    }
+    console.log(value.seats);
+    const Buses = await BusSchema.find({
+      from: value.from,
+      to: value.to,
+      type: value.type,
+      date: value.date,
+      seats: parseInt(value.seats),
+      section: value.section,
+      Boarding: Boarding,
+    });
+    console.log(value.seats);
+    console.log(typeof Boarding);
+    console.log("searched");
+    if (!Buses || Buses.length === 0)
+      return res.status(404).json({ message: "No Buses available" });
+    console.log(Buses);
+    return res.status(200).json({ message: "Success", Buses });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Something went wrong while getting avalable buses" });
+  }
+};
+
 const BookBus = async (req, res) => {
   const busId = req.params.id;
   console.log(busId);
@@ -177,4 +212,5 @@ module.exports = {
   BookBus,
   AlreadyBookedseats,
   CancelBooking,
+  availableBuses,
 };

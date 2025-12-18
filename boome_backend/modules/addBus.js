@@ -9,7 +9,7 @@ const BusSchema = new mongoose.Schema(
     imageUrl: { type: String, default: "no image" },
     seats: { type: Number, required: true },
     type: { type: String, required: true },
-    date: { type: Date, required: false },
+    date: { type: Date, required: false, default: "N/A" },
     Boarding: { type: Boolean, default: false, required: true },
     terminal: { type: String, default: "N/A", required: true },
     section: { type: String, required: true },

@@ -30,7 +30,7 @@ const validateaddingBus = Joi.object({
   type: Joi.string().min(6).required(),
   Boarding: Joi.boolean().default(false),
   terminal: Joi.string().default("N/A"),
-  date: Joi.date().optional(),
+  date: Joi.date().required(),
   section: Joi.string().required(),
   Time_Boarding: Joi.string().default("N/A").optional(),
 });

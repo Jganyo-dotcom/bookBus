@@ -259,8 +259,29 @@
         <input id="driverId" placeholder="Driver ID" readonly />
         <input id="busname" placeholder="Bus Name" />
         <input id="busno" placeholder="Bus Number" />
-        <input id="from" placeholder="From" />
-        <input id="to" placeholder="To" />
+
+        <select id="from">
+          <option value="Accra">Accra</option>
+          <option value="Kumasi">Kumasi</option>
+          <option value="Wa">Wa</option>
+          <option value="Navrongo">Navrongo</option>
+          <option value="Nsawam">Nsawam</option>
+          <option value="Landa">Landa</option>
+          <option value="Hunnu">Hunnu</option>
+          <option value="mardar">mardar</option>
+        </select>
+
+        <select id="to">
+          <option value="Accra">Accra</option>
+          <option value="Kumasi">Kumasi</option>
+          <option value="Wa">Wa</option>
+          <option value="Navrongo">Navrongo</option>
+          <option value="Nsawam">Nsawam</option>
+          <option value="Landa">Landa</option>
+          <option value="Hunnu">Hunnu</option>
+          <option value="mardar">mardar</option>
+        </select>
+        <input id="date" type="date" placeholder="To" />
 
         <select id="section">
           <option>morning</option>
@@ -268,7 +289,13 @@
           <option>evening</option>
         </select>
 
-        <input id="seats" type="number" placeholder="Seats" />
+        <label class="small">size</label>
+        <select id="seats">
+          <option value="44">44</option>
+          <option value="55">55</option>
+          <option value="66">66</option>
+          <option value="15">15</option>
+        </select>
 
         <select id="type">
           <option>luxury</option>
@@ -283,9 +310,15 @@
     </div>
 
     <a href="index.html">index</a>
-
+    <a href="user.html">user</a>
     <script>
       let token = "";
+
+      // Restore saved driver ID on page load
+      const savedDriverId = localStorage.getItem("driverId");
+      if (savedDriverId) {
+        driverId.value = savedDriverId;
+      }
 
       function showLoader() {
         loader.style.display = "flex";
@@ -316,6 +349,14 @@
       }
 
       async function createDriver() {
+        // ❗ BLOCK creating a new driver if one is already pending
+        if (localStorage.getItem("driverId")) {
+          alert(
+            "You must link the previous driver to a bus before creating a new one."
+          );
+          return;
+        }
+
         showLoader();
 
         const res = await fetch("/admin/driver/register", {
@@ -339,13 +380,16 @@
           return;
         }
 
+        // Save driver ID
         driverId.value = data.newDriver.id;
+        localStorage.setItem("driverId", data.newDriver.id);
 
         driverResult.innerHTML = `
-          <p><b>ID:</b> ${data.newDriver.id}</p>
-          <p><b>Name:</b> ${data.newDriver.name}</p>
-          <p><b>Email:</b> ${data.newDriver.email}</p>
-        `;
+      <p><b>ID:</b> ${data.newDriver.id}</p>
+      <p><b>Name:</b> ${data.newDriver.name}</p>
+      <p><b>Email:</b> ${data.newDriver.email}</p>
+    `;
+        resetDriverFields();
       }
 
       async function createStaff() {
@@ -376,6 +420,7 @@
         form.append("Busname", busname.value);
         form.append("bus_no", busno.value);
         form.append("from", from.value);
+        form.append("date", new Date(date.value).toISOString().split("T")[0]);
         form.append("to", to.value);
         form.append("section", section.value);
         form.append("seats", seats.value);
@@ -395,6 +440,29 @@
         if (!res.ok) return alert(data.message || "failed");
 
         alert(data.message || "Bus created successfully");
+        resetBusFields();
+        // Clear saved driver ID after linking
+        localStorage.removeItem("driverId");
+        driverId.value = "";
+        driverResult.innerHTML = "";
+      }
+
+      function resetBusFields() {
+        busname.value = "";
+        busno.value = "";
+        from.value = ""; // or ""
+        to.value = ""; // or ""
+        date.value = "";
+        section.value = ""; // or ""
+        seats.value = "";
+        type.value = "";
+        image.value = "";
+      }
+
+      function resetDriverFields() {
+        dname.value = "";
+        demail.value = "";
+        dpassword.value = "";
       }
     </script>
   </body>

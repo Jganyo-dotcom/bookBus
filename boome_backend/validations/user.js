@@ -16,8 +16,19 @@ const validationForBookingSchema = Joi.object({
   financial_Status: Joi.string().min(6).default("pending"),
 });
 
+const validateBookingBus = Joi.object({
+  from: Joi.string().min(2).required(),
+  to: Joi.string().min(2).required(),
+  seats: Joi.number().required(),
+  type: Joi.string().min(6).required(),
+  Boarding: Joi.boolean().default(false),
+  date: Joi.date().optional(),
+  section: Joi.string().required(),
+});
+
 module.exports = {
   validationForRegisterSchema,
   validationForLogin,
   validationForBookingSchema,
+  validateBookingBus,
 };
