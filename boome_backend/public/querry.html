@@ -281,7 +281,7 @@
           <option value="Hunnu">Hunnu</option>
           <option value="mardar">mardar</option>
         </select>
-        <input id="date" type="date" placeholder="To" />
+        <input id="date" type="date" />
 
         <select id="section">
           <option>morning</option>
@@ -420,7 +420,10 @@
         form.append("Busname", busname.value);
         form.append("bus_no", busno.value);
         form.append("from", from.value);
-        form.append("date", new Date(date.value).toISOString().split("T")[0]);
+        console.log("DATE VALUE:", date.value);
+
+        form.append("date", date.value);
+
         form.append("to", to.value);
         form.append("section", section.value);
         form.append("seats", seats.value);
