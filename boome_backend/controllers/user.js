@@ -129,12 +129,10 @@ const availableBuses = async (req, res) => {
       section: value.section,
       Boarding: Boarding,
     });
-    console.log(value.seats);
-    console.log(typeof Boarding);
-    console.log("searched");
     if (!Buses || Buses.length === 0)
       return res.status(404).json({ message: "No Buses available" });
     console.log(Buses);
+    console.log(`${req.user.name} with email ${req.user.email} requested `);
     return res.status(200).json({ message: "Success", Buses });
   } catch (error) {
     return res
