@@ -38,6 +38,7 @@ const add_Bus = async (req, res) => {
     res.status(201).json({ message: "Bus has been created" }, newbus);
   } catch (error) {
     console.log(error);
+    console.log(error);
     res.status(500).json({ message: "something went wrong while saving bus" });
   }
 };
