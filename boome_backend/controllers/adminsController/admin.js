@@ -101,10 +101,7 @@ const getUsers = async (req, res) => {
 
 //get all drivers
 const getDrivers = async (req, res) => {
-  if (req.user.role !== "Admin") {
-    return res.status(403).json({ message: "you dont have permission" });
-  }
-  const Users = await BusModel.find({}).populate("Driver", "name email");
+  const Users = await driverModule.find({}).sort({ createdAt: -1 });
   res.status(200).json({ message: "sucess", Users });
 };
 
@@ -178,8 +175,6 @@ const getUserById = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const id = req.params.id;
-  if (req.user !== "Admin")
-    return res.status(403).json({ message: "you dont have permision" });
 
   try {
     const Guest = await UserSchema.find({
@@ -197,6 +192,31 @@ const deleteUser = async (req, res) => {
     return res
       .status(500)
       .json({ message: "something went wrong in deleting Guest" });
+  }
+};
+
+const deleteDriver = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const driver = await driverModule.find({
+      _id: id,
+      role: "Driver",
+    });
+    const dontdelete = await BusModel.findOne({ Driver: id });
+    if (dontdelete)
+      return res
+        .status(400)
+        .json({ message: "driver has a bus delete bus to delete driver" });
+    if (!driver) return res.status(404).json({ message: "driver not found" });
+    const aboutToDeleteDriver = await driverModule.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: "Deleted driver" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "something went wrong in deleting Driver" });
   }
 };
 
@@ -254,4 +274,5 @@ module.exports = {
   registerNewDriver,
   getDrivers,
   getOneDriver,
+  deleteDriver,
 };

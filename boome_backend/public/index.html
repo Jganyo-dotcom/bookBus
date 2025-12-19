@@ -1,40 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Viewport for responsive design -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Bus Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eli Transport – Admin</title>
     <style>
-      /* Overlay (optional) */
+      :root {
+        --primary: #0d6efd;
+        --secondary: #0b5ed7;
+        --success: #198754;
+        --danger: #dc3545;
+        --dark: #1f2933;
+        --muted: #64748b;
+        --bg: #eef2f7;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --text: #1e293b;
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(135deg, var(--bg), #e2e8f0);
+        color: var(--text);
+        padding: 24px;
+        min-height: 100vh;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* Spinner overlay */
       .spinner-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(15, 23, 42, 0.55); /* soft dark */
-        display: flex;
+        background: rgba(15, 23, 42, 0.55);
+        display: none;
         justify-content: center;
         align-items: center;
         z-index: 9999;
+        backdrop-filter: blur(2px);
       }
-
-      /* Spinner */
       .spinner {
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        border: 4px solid rgba(148, 163, 184, 0.3); /* soft gray */
-        border-top-color: #0d6efd; /* primary blue */
+        border: 4px solid rgba(148, 163, 184, 0.3);
+        border-top-color: var(--primary);
         animation: spin 0.7s linear infinite, glow 1.4s ease-in-out infinite;
       }
-
-      /* Rotation */
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
-
-      /* Soft glow pulse */
       @keyframes glow {
         0%,
         100% {
@@ -45,225 +70,196 @@
         }
       }
 
-      /* ==============================
-   GLOBAL RESET & VARIABLES
-================================ */
-      :root {
-        --primary: #0d6efd;
-        --secondary: #0b5ed7;
-        --danger: #dc3545;
-        --success: #198754;
-        --dark: #1f2933;
-        --light: #f8fafc;
-        --border: #e5e7eb;
-        --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      /* ==============================
-   BODY
-================================ */
-      body {
-        font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
-          sans-serif;
-        background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-        color: #1e293b;
-        padding: 30px;
-        min-height: 100vh;
-      }
-
-      /* ==============================
-   LOGIN BOX
-================================ */
-      #loginBox {
-        max-width: 420px;
-        margin: 100px auto;
-        background: white;
-        padding: 35px;
-        border-radius: 14px;
+      /* Auth card */
+      .auth-card {
+        max-width: 460px;
+        margin: 80px auto 24px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
         box-shadow: var(--shadow);
+        padding: 28px;
         text-align: center;
       }
-
-      #loginBox h2 {
-        margin-bottom: 20px;
+      .auth-card h2 {
+        margin-bottom: 18px;
         color: var(--dark);
       }
-
-      #loginBox input {
+      .input,
+      .select {
         width: 100%;
         padding: 12px 14px;
-        margin: 10px 0;
-        border-radius: 8px;
+        margin: 8px 0;
+        border-radius: 10px;
         border: 1px solid var(--border);
         font-size: 15px;
+        background: #fff;
+        outline: none;
       }
-
-      #loginBox button {
+      .input:focus,
+      .select:focus {
+        border-color: var(--primary);
+      }
+      .btn {
         width: 100%;
         padding: 12px;
-        margin-top: 15px;
-        border-radius: 8px;
-        background: var(--primary);
-        color: white;
+        margin-top: 12px;
+        border-radius: 10px;
         border: none;
-        font-size: 16px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.2s ease, transform 0.1s ease;
       }
-
-      #loginBox button:hover {
+      .btn:hover {
         background: var(--secondary);
         transform: translateY(-1px);
       }
 
-      /* ==============================
-   DASHBOARD
-================================ */
-      #dashboard {
-        background: white;
-        padding: 25px;
-        border-radius: 16px;
-        box-shadow: var(--shadow);
+      /* Admin layout */
+      .admin {
+        max-width: 1100px;
+        margin: 0 auto;
       }
-
-      #dashboard h2 {
-        margin-bottom: 20px;
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .header h2 {
+        margin: 0;
         color: var(--dark);
       }
-
-      /* ==============================
-   INPUTS & BUTTONS
-================================ */
-      input,
-      select {
-        padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        font-size: 14px;
-        outline: none;
+      .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
       }
-
-      input:focus,
-      select:focus {
+      .tab {
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--dark);
+      }
+      .tab.active {
+        background: var(--primary);
+        color: #fff;
         border-color: var(--primary);
       }
 
-      button {
-        padding: 10px 14px;
-        border-radius: 8px;
-        border: none;
-        background: var(--primary);
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s ease, transform 0.1s ease;
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+      .card h3 {
+        margin: 0 0 12px 0;
+        color: var(--dark);
       }
 
-      button:hover {
-        background: var(--secondary);
-        transform: translateY(-1px);
-      }
-
-      /* Delete buttons */
-      button[onclick*="Delete"] {
-        background: var(--danger);
-      }
-
-      button[onclick*="Delete"]:hover {
-        background: #bb2d3b;
-      }
-
-      /* ==============================
-   TABLE
-================================ */
+      /* Tables */
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 25px;
+        margin-top: 12px;
         border-radius: 12px;
         overflow: hidden;
+        background: #fff;
       }
-
       thead {
         background: var(--dark);
-        color: white;
+        color: #fff;
       }
-
       th,
       td {
-        padding: 14px;
+        padding: 12px 14px;
         text-align: left;
         font-size: 14px;
-      }
-
-      tbody tr {
         border-bottom: 1px solid var(--border);
       }
-
       tbody tr:hover {
         background: #f8fafc;
       }
 
-      /* ==============================
-   MODALS (UPDATE & DELETE)
-================================ */
-      .modal,
-      .modall {
+      .btn-inline {
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+      .btn-inline:hover {
+        background: var(--secondary);
+        transform: translateY(-1px);
+      }
+      .btn-danger {
+        background: var(--danger);
+      }
+      .btn-danger:hover {
+        background: #bb2d3b;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 14px;
+        }
+        .auth-card {
+          margin-top: 48px;
+          padding: 22px;
+        }
+        .tab {
+          flex: 1;
+          text-align: center;
+        }
+        th,
+        td {
+          padding: 10px;
+          font-size: 13px;
+        }
+      }
+
+      /* Modals */
+      .modal {
         position: fixed;
         inset: 0;
         background: rgba(15, 23, 42, 0.65);
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         z-index: 1000;
       }
-
       .modal-content {
-        background: white;
-        padding: 30px;
+        background: #fff;
         width: 420px;
-        max-width: 90%;
+        max-width: 92%;
         border-radius: 16px;
         box-shadow: var(--shadow);
+        padding: 22px;
         animation: slideUp 0.25s ease;
       }
-
-      .modal-content h3 {
-        margin-bottom: 15px;
-        color: var(--dark);
-      }
-
-      .modal-content label {
-        display: block;
-        margin-top: 12px;
-        margin-bottom: 6px;
-        font-weight: 600;
-      }
-
-      .modal-content input,
-      .modal-content select {
-        width: 100%;
-      }
-
-      .modal-content button {
-        margin-top: 15px;
-      }
-
-      /* ==============================
-   HIDDEN
-================================ */
-      .hidden {
-        display: none;
-      }
-
-      /* ==============================
-   ANIMATIONS
-================================ */
       @keyframes slideUp {
         from {
           opacity: 0;
@@ -275,135 +271,332 @@
         }
       }
 
-      /* ==============================
-   LINKS
-================================ */
-      a {
-        display: inline-block;
-        margin-top: 25px;
-        text-decoration: none;
-        font-weight: 600;
-        color: var(--primary);
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      /* ==============================
-   MOBILE RESPONSIVE TABLE
-================================ */
-      @media (max-width: 768px) {
+      /* Extra small devices (max-width: 480px) */
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+        }
+        .auth-card {
+          margin-top: 40px;
+          padding: 18px;
+        }
+        h2 {
+          font-size: 20px;
+        }
+        h3 {
+          font-size: 16px;
+        }
+        .input,
+        .select,
+        .btn {
+          font-size: 14px;
+          padding: 10px;
+        }
         table {
           display: block;
           overflow-x: auto;
           white-space: nowrap;
-          border-radius: 12px;
+          border-radius: 10px;
         }
-
-        th,
-        td {
-          padding: 10px;
-          font-size: 13px;
-        }
-      }
-
-      @media (max-width: 480px) {
         th,
         td {
           padding: 8px;
           font-size: 12px;
         }
-      }
-
-      /* ==============================
-   RESPONSIVE MODALS
-================================ */
-      .modal-content {
-        width: 90%;
-        max-width: 380px;
-        padding: 22px;
-      }
-
-      @media (max-width: 480px) {
-        .modal-content {
-          padding: 18px;
-          border-radius: 12px;
+        .grid {
+          grid-template-columns: 1fr; /* stack forms vertically */
         }
-
-        .modal-content h3 {
-          font-size: 18px;
-        }
-
-        .modal-content input,
-        .modal-content select,
-        .modal-content button {
+        .tab {
+          flex: 1;
+          text-align: center;
           font-size: 14px;
-          padding: 10px;
+          padding: 8px;
+        }
+      }
+
+      /* Small devices (max-width: 768px) */
+      @media (max-width: 768px) {
+        .admin {
+          padding: 0 8px;
+        }
+        .header h2 {
+          font-size: 22px;
+        }
+        .card {
+          padding: 16px;
+        }
+        .btn-inline {
+          padding: 8px;
+          font-size: 13px;
         }
       }
     </style>
   </head>
   <body>
-    <div id="loader" class="spinner-overlay hidden">
-      <div class="spinner"></div>
-    </div>
+    <!-- Loader -->
+    <div id="loader" class="spinner-overlay"><div class="spinner"></div></div>
 
-    <!-- 🔐 LOGIN -->
-    <div id="loginBox">
+    <!-- Login -->
+    <div id="loginBox" class="auth-card">
       <h2>Admin Login</h2>
-      <input type="email" id="email" placeholder="Email" /><br />
-      <input type="password" id="password" placeholder="Password" /><br />
-      <button onclick="login()">Login</button>
-      <a href="user.html">login as user</a>
+      <input id="email" class="input" type="email" placeholder="Email" />
+      <input
+        id="password"
+        class="input"
+        type="password"
+        placeholder="Password"
+      />
+      <button class="btn" onclick="login()">Login</button>
+      <div style="margin-top: 12px">
+        <a
+          href="user.html"
+          style="color: var(--primary); font-weight: 600; text-decoration: none"
+          >Login as user</a
+        >
+      </div>
     </div>
 
-    <!-- 📊 DASHBOARD -->
-    <div id="dashboard" class="hidden">
-      <h2>Admin Dashboard</h2>
+    <!-- Admin -->
+    <div id="admin" class="admin hidden">
+      <div class="header">
+        <h2>Admin dashboard</h2>
+        <div style="display: flex; gap: 8px; align-items: center">
+          <button
+            class="tab active"
+            data-tab="buses"
+            onclick="switchTab('buses')"
+          >
+            Buses
+          </button>
+          <button class="tab" data-tab="drivers" onclick="switchTab('drivers')">
+            Drivers
+          </button>
+          <button class="tab" data-tab="create" onclick="switchTab('create')">
+            Create
+          </button>
+        </div>
+      </div>
 
-      <button onclick="fetchAllBuses()">Query All Buses</button>
+      <!-- Buses -->
+      <section id="tab-buses" class="card">
+        <h3>Buses</h3>
+        <div
+          style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px"
+        >
+          <button class="btn-inline" onclick="fetchAllBuses()">
+            Query all buses
+          </button>
+          <input
+            id="busNoSearch"
+            class="input"
+            placeholder="Search bus number"
+            style="max-width: 220px"
+          />
+          <button class="btn-inline" onclick="searchByBusNo()">Search</button>
+          <input
+            id="driverSearch"
+            class="input"
+            placeholder="Search driver name"
+            style="max-width: 220px"
+          />
+          <button class="btn-inline" onclick="searchByDriver()">Search</button>
+        </div>
 
-      <br /><br />
+        <table>
+          <thead>
+            <tr>
+              <th>Bus</th>
+              <th>Number</th>
+              <th>Route</th>
+              <th>Driver</th>
+              <th>Boarding</th>
+              <th>Time</th>
+              <th>Date</th>
+              <th>Terminal</th>
+              <th>Type</th>
+              <th>Section</th>
+              <th>Seats</th>
+              <th>Action</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="busTable"></tbody>
+        </table>
+      </section>
 
-      <input id="busNoSearch" placeholder="Search Bus Number" />
-      <button onclick="searchByBusNo()">Search</button>
+      <!-- Drivers -->
+      <section id="tab-drivers" class="card hidden">
+        <h3>Drivers</h3>
+        <div
+          style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px"
+        >
+          <button class="btn-inline" onclick="fetchdrivers()">
+            Query all drivers
+          </button>
 
-      <input id="driverSearch" placeholder="Search Driver Name" />
-      <button onclick="searchByDriver()">Search</button>
+          <!-- Search by name -->
+          <input
+            id="driverNameSearch"
+            class="input"
+            placeholder="Search driver name"
+            style="max-width: 220px"
+          />
+          <button class="btn-inline" onclick="searchDriverByName()">
+            Search
+          </button>
 
-      <table id="make">
-        <thead>
-          <tr>
-            <th>Bus</th>
-            <th>Number</th>
-            <th>Route</th>
-            <th>Driver</th>
-            <th>Boarding</th>
-            <th>Time</th>
-            <th>Date</th>
-            <th>Terminal</th>
-            <th>Type</th>
-            <th>section</th>
-            <th>seats</th>
-            <th>Action</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="busTable"></tbody>
-      </table>
+          <!-- Search by email -->
+          <input
+            id="driverEmailSearch"
+            class="input"
+            placeholder="Search driver email"
+            style="max-width: 220px"
+          />
+          <button class="btn-inline" onclick="searchDriverByEmail()">
+            Search
+          </button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Action</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="driverTable"></tbody>
+        </table>
+      </section>
+
+      <!-- Create -->
+      <section id="tab-create" class="card hidden">
+        <h3>Create records</h3>
+
+        <div class="grid">
+          <!-- Create Driver -->
+          <div class="card">
+            <h3>Create driver</h3>
+            <input id="dname" class="input" placeholder="Driver name" />
+            <input id="demail" class="input" placeholder="Driver email" />
+            <input id="dpassword" class="input" placeholder="Temp password" />
+            <button class="btn" onclick="createDriver()">Create driver</button>
+            <div
+              id="driverResult"
+              style="
+                margin-top: 12px;
+                padding: 12px;
+                background: #f8fafc;
+                border-left: 4px solid var(--success);
+                border-radius: 8px;
+              "
+            ></div>
+          </div>
+
+          <!-- Create Staff -->
+          <div class="card">
+            <h3>Create staff</h3>
+            <input id="sname" class="input" placeholder="Staff name" />
+            <input id="semail" class="input" placeholder="Staff email" />
+            <input id="spassword" class="input" placeholder="Temp password" />
+            <button class="btn" onclick="createStaff()">Create staff</button>
+          </div>
+        </div>
+
+        <!-- Create Bus -->
+        <div class="card">
+          <h3>Create bus</h3>
+          <input
+            id="driverId"
+            class="input"
+            placeholder="Driver ID (auto-filled)"
+            readonly
+          />
+          <div class="grid">
+            <div>
+              <input id="busname" class="input" placeholder="Bus name" />
+              <input id="busno" class="input" placeholder="Bus number" />
+              <select id="from" class="select">
+                <option value="">From (select)</option>
+                <option value="Accra">Accra</option>
+                <option value="Kumasi">Kumasi</option>
+                <option value="Wa">Wa</option>
+                <option value="Navrongo">Navrongo</option>
+                <option value="Nsawam">Nsawam</option>
+                <option value="Landa">Landa</option>
+                <option value="Hunnu">Hunnu</option>
+                <option value="mardar">mardar</option>
+              </select>
+              <select id="to" class="select">
+                <option value="">To (select)</option>
+                <option value="Accra">Accra</option>
+                <option value="Kumasi">Kumasi</option>
+                <option value="Wa">Wa</option>
+                <option value="Navrongo">Navrongo</option>
+                <option value="Nsawam">Nsawam</option>
+                <option value="Landa">Landa</option>
+                <option value="Hunnu">Hunnu</option>
+                <option value="mardar">mardar</option>
+              </select>
+            </div>
+            <div>
+              <input id="date" class="input" type="date" />
+              <select id="section" class="select">
+                <option value="">Section (select)</option>
+                <option>morning</option>
+                <option>evening</option>
+              </select>
+              <label style="font-size: 12px; color: var(--muted)">Size</label>
+              <select id="seats" class="select">
+                <option value="">Seats (select)</option>
+                <option value="55">55</option>
+                <option value="15">15</option>
+              </select>
+              <select id="type" class="select">
+                <option value="">Type (select)</option>
+                <option>luxury</option>
+                <option>standard</option>
+              </select>
+            </div>
+          </div>
+          <input type="file" id="image" class="input" />
+          <button class="btn" onclick="createBus()">Create bus</button>
+        </div>
+
+        <div style="display: flex; gap: 16px; margin-top: 8px">
+          <a
+            href="index.html"
+            style="
+              font-weight: 600;
+              color: var(--primary);
+              text-decoration: none;
+            "
+            >Home</a
+          >
+          <a
+            href="user.html"
+            style="
+              font-weight: 600;
+              color: var(--primary);
+              text-decoration: none;
+            "
+            >User</a
+          >
+        </div>
+      </section>
     </div>
 
-    <!-- 🪟 MODAL -->
-    <div id="modal" class="modal hidden">
+    <!-- Update Boarding Modal -->
+    <div id="modal" class="modal">
       <div class="modal-content">
-        <h3>Update Boarding</h3>
-
-        <button onclick="toggleBoarding()">Toggle Boarding</button>
-        <p id="boardingStatus"></p>
-
-        <label>Terminal</label>
-        <select id="terminal">
+        <h3>Update boarding</h3>
+        <button class="btn-inline" onclick="toggleBoarding()">
+          Toggle boarding
+        </button>
+        <p id="boardingStatus" style="margin: 10px 0"></p>
+        <label style="font-weight: 600">Terminal</label>
+        <select id="terminal" class="select">
           <option>terminal 1</option>
           <option>terminal 2</option>
           <option>terminal 3</option>
@@ -412,47 +605,86 @@
           <option>terminal 6</option>
           <option>terminal 7</option>
         </select>
-
-        <label>Section</label>
-        <select id="section">
+        <label style="font-weight: 600; margin-top: 8px">Section</label>
+        <select id="sectionModal" class="select">
           <option>morning</option>
           <option>afternoon</option>
           <option>evening</option>
           <option>night</option>
         </select>
-
-        <label>Time Boarding</label>
-        <input id="timeBoarding" placeholder="e.g 3pm" />
-
-        <br /><br />
-        <button onclick="submitUpdate()">Update</button>
-        <button onclick="closeModal()">Cancel</button>
+        <label style="font-weight: 600; margin-top: 8px">Time boarding</label>
+        <input id="timeBoarding" class="input" placeholder="e.g. 3pm" />
+        <div style="display: flex; gap: 10px; margin-top: 14px">
+          <button class="btn" onclick="submitUpdate()">Update</button>
+          <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+        </div>
       </div>
     </div>
 
-    <!-------------------------------------------->
-    <!-- 🪟 MODAL -->
-    <div id="modall" class="modal hidden">
+    <!-- Delete Bus Modal -->
+    <div id="modall" class="modal">
       <div class="modal-content">
-        <h3>Delete Bus</h3>
-        <button onclick="submitDelete()">Delete</button>
-        <button onclick="closeModall()">Cancel</button>
+        <h3>Delete bus</h3>
+        <div style="display: flex; gap: 10px; margin-top: 10px">
+          <button class="btn btn-danger" onclick="submitDelete()">
+            Delete
+          </button>
+          <button class="btn" onclick="closeModall()">Cancel</button>
+        </div>
       </div>
     </div>
 
-    <!------------------------------------------------------------>
-    <a href="querry.html">querry</a>
+    <!-- Delete Driver Modal -->
+    <div id="modalll" class="modal">
+      <div class="modal-content">
+        <h3>Delete driver</h3>
+        <div style="display: flex; gap: 10px; margin-top: 10px">
+          <button class="btn btn-danger" onclick="submitDeletedriver()">
+            Delete
+          </button>
+          <button class="btn" onclick="closeModalll()">Cancel</button>
+        </div>
+      </div>
+    </div>
 
     <script>
+      // State
       let token = "";
       let selectedBusId = "";
+      let selecteddriveId = ""; // fix: declare this
       let boardingValue = false;
 
-      /* 🔐 LOGIN */
-      async function login() {
-        // Show spinner
-        document.getElementById("loader").classList.remove("hidden");
+      // Restore saved driver ID into Create Bus form
+      (function restoreDriverId() {
+        const savedDriverId = localStorage.getItem("driverId");
+        if (savedDriverId)
+          document.getElementById("driverId").value = savedDriverId;
+      })();
 
+      // Tabs
+      function switchTab(tab) {
+        const tabs = ["buses", "drivers", "create"];
+        tabs.forEach((t) => {
+          document
+            .getElementById(`tab-${t}`)
+            .classList.toggle("hidden", t !== tab);
+          document
+            .querySelector(`.tab[data-tab="${t}"]`)
+            .classList.toggle("active", t === tab);
+        });
+      }
+
+      // Loader
+      function showLoader() {
+        document.getElementById("loader").style.display = "flex";
+      }
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+      }
+
+      // Auth
+      async function login() {
+        showLoader();
         try {
           const res = await fetch("/admin/login", {
             method: "POST",
@@ -462,175 +694,402 @@
               password: password.value,
             }),
           });
-
           const data = await res.json();
-
-          // Hide spinner
-          document.getElementById("loader").classList.add("hidden");
+          hideLoader();
 
           if (!data.token) {
-            alert("Login failed");
+            alert(data.message || "Login failed");
             return;
           }
-
-          // SAVE TOKEN
           token = data.token;
           localStorage.setItem("token", token);
 
-          alert(data.message);
+          document.getElementById("loginBox").classList.add("hidden");
+          document.getElementById("admin").classList.remove("hidden");
 
-          loginBox.classList.add("hidden");
-          dashboard.classList.remove("hidden");
-
-          // Fetch buses immediately after login
-          fetchBuses("/admin/Admin/buses");
+          // Load buses first
+          fetchAllBuses();
         } catch (err) {
-          document.getElementById("loader").classList.add("hidden");
+          hideLoader();
           alert("Network error");
         }
       }
 
-      /* 🚍 FETCH ALL */
+      // Fetch helpers
       async function fetchAllBuses() {
         fetchBuses("/admin/Admin/buses");
       }
+      async function fetchdrivers() {
+        fetchalldriver("/admin/alldrivers");
+      }
 
-      /* 🔍 SEARCH */
       function searchByBusNo() {
-        fetchBuses(`/bus/bus-number?number=${busNoSearch.value}`);
+        const n = document.getElementById("busNoSearch").value;
+        if (!n) return alert("Enter a bus number");
+        fetchBuses(`/bus/bus-number?number=${encodeURIComponent(n)}`);
       }
       function searchByDriver() {
-        fetchBuses(`/admin/driver?name=${driverSearch.value}`);
+        const d = document.getElementById("driverSearch").value;
+        if (!d) return alert("Enter a driver name");
+        // Assuming your backend responds with buses for this query
+        fetchBuses(`/admin/driver?name=${encodeURIComponent(d)}`);
       }
 
-      /* 📡 FETCH */
       async function fetchBuses(url) {
-        // Show spinner
-        document.getElementById("loader").classList.remove("hidden");
-
+        showLoader();
         try {
           const res = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
           });
-
           const data = await res.json();
-
-          // Normalize to array
           const busesArray =
             data.allbuses ?? data.buses ?? (data.bus ? [data.bus] : []);
-
-          render(busesArray);
+          if (data.message) alert(data.message);
+          renderBuses(busesArray);
         } catch (err) {
           alert("Failed to fetch buses");
         } finally {
-          // Hide spinner no matter what
-          document.getElementById("loader").classList.add("hidden");
+          hideLoader();
         }
       }
-      /* 🖥️ RENDER */
-      function render(buses) {
+
+      async function fetchalldriver(url) {
+        showLoader();
+        try {
+          const res = await fetch(url, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          const driversArray = Array.isArray(data.Users)
+            ? data.Users
+            : data.Users
+            ? [data.Users]
+            : [];
+          renderDrivers(driversArray);
+        } catch (err) {
+          alert("Failed to fetch drivers");
+        } finally {
+          hideLoader();
+        }
+      }
+
+      // Renderers
+      function renderBuses(buses) {
+        const busTable = document.getElementById("busTable");
         busTable.innerHTML = "";
         buses.forEach((b) => {
           busTable.innerHTML += `
-      <tr>
-        <td>${b.Busname}</td>
-        <td>${b.bus_no}</td>
-        <td>${b.from} → ${b.to}</td>
-        <td>${b.Driver?.name}</td>
-        <td>${b.Boarding}</td>
-        <td>${b.Time_Boarding}</td>
-        <td>${b.date}</td>
-        <td>${b.terminal}</td>
-        <td>${b.type}</td>
-        <td>${b.section}</td>
-        <td>${b.seats}</td>
-        <td>
-          <button onclick="openModal('${b._id}', ${b.Boarding})">
-              Update to Board
-            </button>
-        </td>
-        <td>
-          <button onclick="openModalondelete('${b._id}')">
-              Delete
-            </button>
-        </td>
-      </tr>
-    `;
+          <tr>
+            <td>${b.Busname ?? ""}</td>
+            <td>${b.bus_no ?? ""}</td>
+            <td>${b.from ?? ""} → ${b.to ?? ""}</td>
+            <td>${b.Driver?.name ?? ""}</td>
+            <td>${b.Boarding ?? ""}</td>
+            <td>${b.Time_Boarding ?? ""}</td>
+            <td>${b.date ?? ""}</td>
+            <td>${b.terminal ?? ""}</td>
+            <td>${b.type ?? ""}</td>
+            <td>${b.section ?? ""}</td>
+            <td>${b.seats ?? ""}</td>
+            <td>
+              <button class="btn-inline" onclick="openModal('${
+                b._id
+              }', ${!!b.Boarding})">Update to board</button>
+            </td>
+            <td>
+              <button class="btn-inline btn-danger" onclick="openModalondelete('${
+                b._id
+              }','${b.Driver?._id ?? ""}')">Delete</button>
+            </td>
+          </tr>
+        `;
         });
       }
 
-      /* 🪟 MODAL */
+      function renderDrivers(drivers) {
+        const driverTable = document.getElementById("driverTable");
+        driverTable.innerHTML = "";
+        drivers.forEach((d) => {
+          driverTable.innerHTML += `
+          <tr>
+            <td>${d.name ?? ""}</td>
+            <td>${d.email ?? ""}</td>
+            <td>
+              <button class="btn-inline" onclick="openModal('${
+                d._id
+              }', false)">View / Update boarding</button>
+            </td>
+            <td>
+              <button class="btn-inline btn-danger" onclick="openModalondeletedriver('${
+                d._id
+              }')">Delete</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+
+      function searchDriverByName() {
+        const name = document.getElementById("driverNameSearch").value.trim();
+        if (!name) return alert("Enter a driver name");
+        fetchalldriver(`/admin/driver?name=${encodeURIComponent(name)}`);
+      }
+
+      function searchDriverByEmail() {
+        const email = document.getElementById("driverEmailSearch").value.trim();
+        if (!email) return alert("Enter a driver email");
+        fetchalldriver(`/admin/driver?email=${encodeURIComponent(email)}`);
+      }
+
+      // Modals
       function openModal(id, boarding) {
         selectedBusId = id;
-        boardingValue = boarding;
+        boardingValue = !!boarding;
         document.getElementById(
           "boardingStatus"
-        ).innerText = `Boarding: ${boarding}`;
-        document.getElementById("modal").classList.remove("hidden");
+        ).innerText = `Boarding: ${boardingValue}`;
+        document.getElementById("modal").style.display = "flex";
       }
-
-      /* 🪟 DeleteMODAL */
-      function openModalondelete(id) {
-        selectedBusId = id;
-        document.getElementById("modall").classList.remove("hidden");
-      }
-
       function closeModal() {
-        document.getElementById("modal").classList.add("hidden");
+        document.getElementById("modal").style.display = "none";
+      }
+
+      function openModalondelete(busId, driverId) {
+        selectedBusId = busId;
+        selecteddriveId = driverId;
+        document.getElementById("modall").style.display = "flex";
       }
       function closeModall() {
-        document.getElementById("modall").classList.add("hidden");
+        document.getElementById("modall").style.display = "none";
+      }
+
+      function openModalondeletedriver(id) {
+        selectedBusId = id;
+        document.getElementById("modalll").style.display = "flex";
+      }
+      function closeModalll() {
+        document.getElementById("modalll").style.display = "none";
       }
 
       function toggleBoarding() {
         boardingValue = !boardingValue;
-        boardingStatus.innerText = `Boarding: ${boardingValue}`;
+        document.getElementById(
+          "boardingStatus"
+        ).innerText = `Boarding: ${boardingValue}`;
       }
 
-      /* ✅ UPDATE */
+      // Update boarding
       async function submitUpdate() {
-        const payload = {
-          Boarding: boardingValue,
-          terminal: terminal.value,
-          section: section.value,
-          Time_Boarding: timeBoarding.value,
-        };
-
-        const res = await fetch(`/bus/boarding/${selectedBusId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) return alert("Update failed");
-
-        alert("Bus updated successfully");
-        closeModal();
-        fetchAllBuses();
+        showLoader();
+        try {
+          const payload = {
+            Boarding: boardingValue,
+            terminal: document.getElementById("terminal").value,
+            section: document.getElementById("sectionModal").value,
+            Time_Boarding: document.getElementById("timeBoarding").value,
+          };
+          const res = await fetch(`/bus/boarding/${selectedBusId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.message);
+            return;
+          }
+          alert(data.message);
+          closeModal();
+          fetchAllBuses();
+        } catch (err) {
+          alert("Update failed");
+        } finally {
+          hideLoader();
+        }
       }
 
-      /* ✅ Delete */
+      // Delete bus
       async function submitDelete() {
-        const res = await fetch(`/bus/delete/${selectedBusId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) {
-          data = await res.json();
-          alert(data.message);
+        showLoader();
+        try {
+          const res = await fetch(
+            `/bus/delete/${selectedBusId}/${selecteddriveId}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const data = await res.json();
+          alert(data.message || (res.ok ? "Deleted" : "Delete failed"));
+          closeModall();
+          fetchAllBuses();
+        } catch (err) {
+          alert("Delete failed");
+        } finally {
+          hideLoader();
         }
+      }
 
-        data = await res.json();
-        alert(data.message);
-        closeModall();
-        fetchBuses("/admin/Admin/buses");
+      // Delete driver
+      async function submitDeletedriver() {
+        showLoader();
+        try {
+          const res = await fetch(`/admin/delete/driver/${selectedBusId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.message || "Delete failed");
+            return;
+          }
+          alert(data.message || "Driver deleted");
+          closeModalll();
+          fetchdrivers();
+        } catch (err) {
+          alert("Delete failed");
+        } finally {
+          hideLoader();
+        }
+      }
+
+      // Create Driver
+      async function createDriver() {
+        // block creating a new driver if one is pending linking
+        if (localStorage.getItem("driverId")) {
+          alert("Link the previous driver to a bus before creating a new one.");
+          return;
+        }
+        showLoader();
+        try {
+          const res = await fetch("/admin/driver/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              name: document.getElementById("dname").value,
+              email: document.getElementById("demail").value,
+              password: document.getElementById("dpassword").value,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.message || "Driver creation failed");
+            return;
+          }
+
+          document.getElementById("driverId").value = data.newDriver.id;
+          localStorage.setItem("driverId", data.newDriver.id);
+          document.getElementById("driverResult").innerHTML = `
+          <p><b>ID:</b> ${data.newDriver.id}</p>
+          <p><b>Name:</b> ${data.newDriver.name}</p>
+          <p><b>Email:</b> ${data.newDriver.email}</p>
+        `;
+
+          // reset fields
+          document.getElementById("dname").value = "";
+          document.getElementById("demail").value = "";
+          document.getElementById("dpassword").value = "";
+        } catch (err) {
+          alert("Driver creation failed");
+        } finally {
+          hideLoader();
+        }
+      }
+
+      // Create Staff
+      async function createStaff() {
+        showLoader();
+        try {
+          const res = await fetch("/admin/staff/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              name: document.getElementById("sname").value,
+              email: document.getElementById("semail").value,
+              password: document.getElementById("spassword").value,
+              role: "staff",
+            }),
+          });
+          alert(res.ok ? "Staff created" : "Staff creation failed");
+        } catch (err) {
+          alert("Staff creation failed");
+        } finally {
+          hideLoader();
+        }
+      }
+
+      // Create Bus
+      async function createBus() {
+        showLoader();
+        try {
+          const form = new FormData();
+          form.append("Busname", document.getElementById("busname").value);
+          form.append("bus_no", document.getElementById("busno").value);
+          form.append("from", document.getElementById("from").value);
+          form.append("date", document.getElementById("date").value);
+          form.append("to", document.getElementById("to").value);
+          form.append("section", document.getElementById("section").value);
+          form.append("seats", document.getElementById("seats").value);
+          form.append("type", document.getElementById("type").value);
+          form.append("terminal", "N/A");
+          form.append("Driver", document.getElementById("driverId").value);
+          const imageFile = document.getElementById("image").files[0];
+          if (imageFile) form.append("image", imageFile);
+
+          const res = await fetch("/bus/add-bus", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: form,
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.message || "Bus creation failed");
+            return;
+          }
+
+          alert(data.message || "Bus created successfully");
+
+          // reset fields
+          [
+            "busname",
+            "busno",
+            "from",
+            "to",
+            "date",
+            "section",
+            "seats",
+            "type",
+            "image",
+          ].forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.tagName === "SELECT") el.value = "";
+            else el.value = "";
+          });
+          // clear saved driverId after linking
+          localStorage.removeItem("driverId");
+          document.getElementById("driverId").value = "";
+          document.getElementById("driverResult").innerHTML = "";
+        } catch (err) {
+          alert("Bus creation failed");
+        } finally {
+          hideLoader();
+        }
       }
     </script>
   </body>

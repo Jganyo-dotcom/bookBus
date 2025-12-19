@@ -68,6 +68,65 @@
         margin: 0 auto;
       }
 
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        width: 400px;
+        max-width: 90%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.3s ease;
+      }
+
+      .close-btn {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .trip-details-card {
+        font-family: "Segoe UI", sans-serif;
+        color: #333;
+      }
+
+      .trip-title {
+        margin-bottom: 12px;
+        text-align: center;
+        color: #3498db;
+      }
+
+      .trip-section {
+        margin-bottom: 10px;
+      }
+
+      .trip-section p {
+        margin: 4px 0;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
       .card {
         background: var(--card);
         border-radius: 18px;
@@ -355,6 +414,142 @@
           padding: 16px 14px;
         }
       }
+
+      /* Small devices */
+      @media (max-width: 768px) {
+        body {
+          padding: 12px;
+        }
+        h1 {
+          font-size: 22px;
+        }
+        .card {
+          padding: 16px;
+        }
+        .bus-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+        .tab-btn {
+          font-size: 13px;
+          padding: 8px;
+        }
+      }
+
+      /* Extra small devices */
+      @media (max-width: 480px) {
+        body {
+          padding: 8px;
+        }
+        h1 {
+          font-size: 20px;
+        }
+        .bus-grid {
+          grid-template-columns: 1fr;
+        }
+        input,
+        select,
+        button {
+          font-size: 13px;
+          padding: 10px;
+        }
+        button {
+          width: 100%;
+          margin-top: 10px;
+        }
+        .modal {
+          padding: 14px;
+          border-radius: 12px;
+        }
+        .modal-header h3 {
+          font-size: 16px;
+        }
+      }
+
+      .seat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .seat {
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 13px;
+        cursor: pointer;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+      }
+      .seat.taken {
+        background: #dc3545; /* red for taken */
+        color: #fff;
+        cursor: not-allowed;
+      }
+      .seat.available {
+        background: #198754; /* green for available */
+        color: #fff;
+      }
+      .seat.selected {
+        background: #0d6efd; /* blue for selected */
+        color: #fff;
+        font-weight: 600;
+      }
+      @media (max-width: 480px) {
+        .seat-grid {
+          grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+          gap: 6px;
+        }
+        .seat {
+          font-size: 12px;
+          padding: 8px;
+        }
+      }
+
+      /* Floating widget */
+      .messages-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--primary);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 50px;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s ease;
+        z-index: 1000;
+      }
+      .messages-widget:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+      }
+      .badge-count {
+        background: #dc3545;
+        color: #fff;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      /* Messages modal */
+      #messagesList .message-item {
+        border-bottom: 1px solid var(--border);
+        padding: 10px;
+      }
+      #messagesList .message-text {
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      #messagesList .message-date {
+        font-size: 12px;
+        color: var(--muted);
+      }
     </style>
   </head>
 
@@ -426,62 +621,43 @@
           Fill the form to search for available buses.
         </p>
 
-        <div id="bookingError" class="error-text" style="display: none"></div>
-
-        <input id="bkName" type="text" placeholder="Your Name" />
-
         <select id="bkFrom">
+          <option value="">From</option>
           <option value="Accra">Accra</option>
           <option value="Kumasi">Kumasi</option>
           <option value="Wa">Wa</option>
-          <option value="Navrongo">Navrongo</option>
-          <option value="Nsawam">Nsawam</option>
-          <option value="Landa">Landa</option>
-          <option value="Hunnu">Hunnu</option>
-          <option value="mardar">mardar</option>
         </select>
 
         <select id="bkTo">
+          <option value="">To</option>
           <option value="Accra">Accra</option>
           <option value="Kumasi">Kumasi</option>
           <option value="Wa">Wa</option>
-          <option value="Navrongo">Navrongo</option>
-          <option value="Nsawam">Nsawam</option>
-          <option value="Landa">Landa</option>
-          <option value="Hunnu">Hunnu</option>
-          <option value="mardar">mardar</option>
         </select>
         <label class="small">Travel date</label>
-        <input id="bkDate" type="date" />
+        <input id="bkDate" type="date" required />
 
         <label class="small">Bus type</label>
         <select id="bkType">
           <option value="">Any type</option>
           <option value="luxury">luxury</option>
-          <option value="standard">standard</option>
           <option value="economy">Economy</option>
         </select>
 
         <label class="small">Section</label>
         <select id="bkSection">
           <option value="morning">Morning</option>
-          <option value="afternoon">Afternoon</option>
           <option value="evening">Evening</option>
         </select>
 
-        <label class="small">Status</label>
-        <select id="bkBoard">
-          <option value="false">NotBoarding</option>
-        </select>
+        <input type="hidden" id="bkBoard" value="false" />
 
         <label class="small">size</label>
         <select id="bkseats">
-          <option value="44">44</option>
           <option value="55">55</option>
-          <option value="66">66</option>
           <option value="15">15</option>
         </select>
-
+        <div id="bookingError" class="error-text" style="display: none"></div>
         <button onclick="searchBuses()">Search Buses</button>
 
         <div id="busResults" style="margin-top: 16px; display: none">
@@ -502,7 +678,17 @@
       </div>
     </div>
 
-    <!-- MODAL FOR CONFIRM BOOKING -->
+    <div id="tripDetailsBackdrop" class="modal-backdrop" style="display: none">
+      <div class="modal-content">
+        <span
+          class="close-btn"
+          onclick="document.getElementById('tripDetailsBackdrop').style.display='none'"
+          >&times;</span
+        >
+        <div id="tripDetailsBody"></div>
+      </div>
+    </div>
+
     <div id="bookingModalBackdrop" class="modal-backdrop">
       <div class="modal">
         <div class="modal-header">
@@ -514,7 +700,29 @@
           <button class="btn-outline" onclick="closeBookingModal()">
             Cancel
           </button>
+          <!-- New Pick Seat button -->
+          <button class="btn-outline" onclick="openSeatModal()">
+            Pick Seat
+          </button>
+          <!-- Book button -->
           <button onclick="confirmBooking()">Book</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seat Selection Modal -->
+    <div id="seatModalBackdrop" class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Select Seat</h3>
+          <button class="btn-outline" onclick="closeSeatModal()">X</button>
+        </div>
+        <div id="seatGrid" class="seat-grid"></div>
+        <div class="modal-footer">
+          <button class="btn-outline" onclick="closeSeatModal()">Cancel</button>
+          <button id="confirmSeatBtn" onclick="saveSeatSelection()" disabled>
+            Confirm Seat
+          </button>
         </div>
       </div>
     </div>
@@ -533,13 +741,66 @@
         </div>
       </div>
     </div>
+    <!-- Floating Messages Button -->
+    <div
+      id="messagesWidget"
+      class="messages-widget"
+      onclick="openMessagesModal()"
+    >
+      💬 <span id="messagesBadge" class="badge-count">0</span>
+    </div>
+
+    <!-- Messages Modal -->
+    <div id="messagesModalBackdrop" class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Admin Messages</h3>
+          <button class="btn-outline" onclick="closeMessagesModal()">X</button>
+        </div>
+        <div
+          id="messagesList"
+          style="max-height: 300px; overflow-y: auto"
+        ></div>
+      </div>
+    </div>
 
     <script>
       let authToken = "";
       let selectedBus = null;
       let currentSearchData = null;
       let bookingToPay = null;
+      // 10 minutes in milliseconds
+      const POLL_INTERVAL = 10 * 60 * 1000; // 600,000 ms
 
+      let messages = [];
+      // Fetch messages from backend
+      async function fetchMessages() {
+        try {
+          const res = await fetch("/guest/messages", {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await res.json();
+          if (!res.ok) return;
+
+          messages = data.messages || [];
+          updateMessagesBadge();
+        } catch (err) {
+          console.log("Failed to fetch messages", err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const dateEl = document.getElementById("bkDate");
+        const today = new Date().toISOString().split("T")[0];
+        dateEl.min = today;
+        dateEl.value = today; // optional
+      });
+
+      // Start polling after login
+      function startMessagePolling() {
+        fetchMessages(); // fetch immediately
+        setInterval(fetchMessages, POLL_INTERVAL);
+      }
       // UTIL: Loader
       function showLoader() {
         document.getElementById("loader").style.display = "flex";
@@ -682,6 +943,7 @@
         }
 
         loadMyBookings();
+        startMessagePolling();
       }
 
       // ON LOAD: Check token
@@ -693,21 +955,58 @@
         }
       })();
 
+      // Polling interval (10 minutes)
+
+      // Update badge count
+      function updateMessagesBadge() {
+        const badge = document.getElementById("messagesBadge");
+        badge.textContent = messages.length;
+      }
+
+      // Open modal
+      function openMessagesModal() {
+        const list = document.getElementById("messagesList");
+        list.innerHTML = "";
+
+        if (!messages.length) {
+          list.innerHTML = "<p class='small'>No messages from admin.</p>";
+        } else {
+          messages.forEach((m) => {
+            const item = document.createElement("div");
+            item.className = "message-item";
+            item.innerHTML = `
+        <div class="message-text">${m.text}</div>
+        <div class="message-date">${new Date(m.date).toLocaleString()}</div>
+      `;
+            list.appendChild(item);
+          });
+        }
+
+        document.getElementById("messagesModalBackdrop").style.display = "flex";
+      }
+
+      // Close modal
+      function closeMessagesModal() {
+        document.getElementById("messagesModalBackdrop").style.display = "none";
+      }
+
+      // Call startMessagePolling() inside your showBookingUI() after login
+
       // SEARCH BUSES
       async function searchBuses() {
         const bookingError = document.getElementById("bookingError");
         bookingError.style.display = "none";
 
-        const name = document.getElementById("bkName").value.trim();
         const from = document.getElementById("bkFrom").value.trim();
         const to = document.getElementById("bkTo").value.trim();
         const rawDate = document.getElementById("bkDate").value;
         const date = new Date(rawDate).toISOString().split("T")[0];
         const type = document.getElementById("bkType").value;
         const section = document.getElementById("bkSection").value;
+        console.log(section);
         const Boarding = document.getElementById("bkBoard").value;
         const seats = document.getElementById("bkseats").value;
-        if (!name || !from || !to || !date || !section) {
+        if (!from || !to || !date || !section) {
           bookingError.textContent =
             "Please fill name, from, to, date and section.";
           bookingError.style.display = "block";
@@ -829,20 +1128,24 @@
         const d = currentSearchData;
 
         try {
+          console.log(d);
+          console.log(d.bus_no);
           showLoader();
-          const res = await fetch("/booking/create", {
+          const res = await fetch(`/guest/booking/${selectedBus._id}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${authToken}`,
             },
             body: JSON.stringify({
-              busId: selectedBus._id || selectedBus.id,
+              seatNumber: selectedSeat, // ✅ include chosen seat
               date: d.date,
               section: d.section,
               from: d.from,
               to: d.to,
-              name: d.name,
+              type: d.type,
+              Boarding: d.Boarding,
+              bus_no: selectedBus.bus_no,
             }),
           });
           const data = await res.json();
@@ -853,12 +1156,12 @@
             return;
           }
 
-          alert("Booking created with status: pending");
+          alert(data.message || "Booking created with status: pending");
           closeBookingModal();
           loadMyBookings();
         } catch (err) {
           hideLoader();
-          alert("Network error while booking. Try again.");
+          alert(data.message || "Network error while booking. Try again.");
         }
       }
 
@@ -871,12 +1174,13 @@
 
         try {
           showLoader();
-          const res = await fetch("/booking/my-bookings", {
+          const res = await fetch("/guest/mybookings", {
             headers: {
               Authorization: `Bearer ${authToken}`,
             },
           });
           const data = await res.json();
+          console.log(data);
           hideLoader();
 
           if (!res.ok) {
@@ -886,7 +1190,7 @@
             return;
           }
 
-          const bookings = data.bookings || [];
+          const bookings = data.Buses || [];
 
           if (!bookings.length) {
             bookingsEmpty.textContent =
@@ -914,16 +1218,23 @@
 
             const badge = document.createElement("span");
             badge.className =
-              "badge " + (b.status === "confirmed" ? "confirmed" : "pending");
+              "badge " +
+              (b.financial_Status === "confirmed" ? "confirmed" : "pending");
             badge.textContent = b.status || "pending";
 
             right.appendChild(badge);
 
-            if (b.status === "pending") {
+            if (b.financial_Status === "pending") {
               const payBtn = document.createElement("button");
-              payBtn.textContent = "Pay";
+              payBtn.textContent = "Pay/canc";
               payBtn.style.marginTop = "6px";
               payBtn.onclick = () => openPayModal(b);
+              right.appendChild(payBtn);
+            } else {
+              const conBtn = document.createElement("button");
+              payBtn.textContent = "Details";
+              payBtn.style.marginTop = "6px";
+              payBtn.onclick = () => openTripDetailsModal(b);
               right.appendChild(payBtn);
             }
 
@@ -938,20 +1249,114 @@
         }
       }
 
-      // PAY MODAL (UI-ready, backend/paystack later)
       function openPayModal(booking) {
         bookingToPay = booking;
+        let terminal =
+          booking.terminal === "N/A" ? "Awaiting" : booking.terminal;
+        let time =
+          booking.Time_Boarding === "N/A" ? "Awaiting" : booking.Time_Boarding;
+
         const body = document.getElementById("payModalBody");
         body.innerHTML = `
-          <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
-          <p><b>Bus:</b> ${booking.bus?.Busname || booking.busName}</p>
-          <p><b>Date:</b> ${booking.date}</p>
-          <p><b>Section:</b> ${booking.section}</p>
-          <p style="margin-top:8px;">
-            When payment is integrated, this will open Paystack and, on success, update the status to <b>confirmed</b>.
-          </p>
-        `;
+    <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
+    <p><b>Terminal:</b> ${terminal}</p>
+    <p><b>Date:</b> ${booking.date}</p>
+    <p><b>Time:</b> ${time}</p>
+    <p><b>Section:</b> ${booking.section}</p>
+    <button id="cancelBtn" class="btn btn-danger">Cancel Trip</button>
+  `;
+
         document.getElementById("payModalBackdrop").style.display = "flex";
+
+        // attach cancel handler to button
+        document.getElementById("cancelBtn").addEventListener("click", () => {
+          canceltrip(booking);
+        });
+      }
+
+      async function canceltrip(booking) {
+        const backdrop = document.getElementById("payModalBackdrop");
+        const bookingError = document.getElementById("bookingError");
+        const loader = document.getElementById("loader");
+
+        try {
+          showLoader();
+
+          const res = await fetch(`/guest/cancel_booking/${booking._id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              busId: booking.Bus,
+              seatNumber: booking.seatNumber,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            bookingError.textContent = data.message || "Failed to cancel trip.";
+            hideLoader();
+            return;
+          }
+
+          backdrop.style.display = "none";
+          bookingToPay = null;
+          await loadMyBookings(); // refresh list
+        } catch (err) {
+          console.error("Cancel trip failed", err);
+          bookingError.textContent = "Something went wrong while cancelling.";
+          bookingError.style.display = "block";
+        } finally {
+          loader.style.display = "none";
+        }
+      }
+
+      function openTripDetailsModal(booking) {
+        // format values
+        const terminal =
+          booking.terminal === "N/A" ? "Awaiting" : booking.terminal;
+        const time =
+          booking.Time_Boarding === "N/A" ? "Awaiting" : booking.Time_Boarding;
+        const date = new Date(booking.date).toLocaleDateString();
+
+        const body = document.getElementById("tripDetailsBody");
+
+        body.innerHTML = `
+    <div class="trip-details-card">
+      <h2 class="trip-title">🚌 Trip Details</h2>
+      <div class="trip-section">
+        <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
+        <p><b>Passenger:</b> ${booking.passenger?.name || "N/A"}</p>
+      </div>
+      <hr/>
+      <div class="trip-section">
+        <p><b>From:</b> ${booking.from}</p>
+        <p><b>To:</b> ${booking.to}</p>
+        <p><b>Date:</b> ${date}</p>
+        <p><b>Section:</b> ${booking.section}</p>
+        <p><b>Terminal:</b> ${terminal}</p>
+        <p><b>Boarding Time:</b> ${time}</p>
+      </div>
+      <hr/>
+      <div class="trip-section">
+        <p><b>Bus No:</b> ${booking.bus_no}</p>
+        <p><b>Seat Number:</b> ${booking.seatNumber}</p>
+        <p><b>Type:</b> ${booking.type}</p>
+      </div>
+      <hr/>
+      <div class="trip-section">
+        <p><b>Financial Status:</b> ${booking.financial_Status}</p>
+        <p><b>Boarding Status:</b> ${
+          booking.Boarding ? "Boarded" : "Not Boarded"
+        }</p>
+      </div>
+    </div>
+  `;
+
+        document.getElementById("tripDetailsBackdrop").style.display = "flex";
       }
 
       function closePayModal() {
@@ -963,13 +1368,81 @@
       async function handlePayNow() {
         if (!bookingToPay) return;
 
-        alert(
-          "Payment flow (Paystack) will be wired here. Booking stays pending until backend marks it confirmed."
-        );
+        alert("Payment flow (Paystack) will be wired here");
         closePayModal();
 
         // Later: call backend e.g. /payment/init or similar
         // then reload bookings: loadMyBookings();
+      }
+
+      let selectedSeat = null;
+
+      // Open seat modal and fetch taken seats from backend
+      async function openSeatModal() {
+        if (!selectedBus) return;
+        selectedSeat = null;
+        document.getElementById("confirmSeatBtn").disabled = true;
+
+        try {
+          showLoader();
+          const res = await fetch(`/guest/bookedseats/${selectedBus._id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await res.json();
+          hideLoader();
+
+          const takenSeats = data.bookedSeats || [];
+          const totalSeats = selectedBus.seats || 0;
+
+          renderSeatGrid(totalSeats, takenSeats);
+          document.getElementById("seatModalBackdrop").style.display = "flex";
+        } catch (err) {
+          hideLoader();
+          alert(data.message);
+        }
+      }
+
+      // Render seat grid with colours
+      function renderSeatGrid(totalSeats, takenSeats) {
+        const grid = document.getElementById("seatGrid");
+        grid.innerHTML = "";
+
+        for (let i = 1; i <= totalSeats; i++) {
+          const seatDiv = document.createElement("div");
+          seatDiv.className = "seat";
+          seatDiv.textContent = i;
+
+          if (takenSeats.includes(i)) {
+            seatDiv.classList.add("taken");
+          } else {
+            seatDiv.classList.add("available");
+            seatDiv.onclick = () => selectSeat(i, seatDiv);
+          }
+
+          grid.appendChild(seatDiv);
+        }
+      }
+
+      // Select seat
+      function selectSeat(seatNumber, seatDiv) {
+        document
+          .querySelectorAll(".seat.selected")
+          .forEach((el) => el.classList.remove("selected"));
+        selectedSeat = seatNumber;
+        seatDiv.classList.add("selected");
+        document.getElementById("confirmSeatBtn").disabled = false;
+      }
+
+      // Save seat selection and close modal
+      function saveSeatSelection() {
+        if (!selectedSeat) return;
+        alert(`Seat ${selectedSeat} selected`);
+        closeSeatModal();
+      }
+
+      // Close seat modal
+      function closeSeatModal() {
+        document.getElementById("seatModalBackdrop").style.display = "none";
       }
     </script>
   </body>

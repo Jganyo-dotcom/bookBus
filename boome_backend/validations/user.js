@@ -14,6 +14,13 @@ const validationForLogin = Joi.object({
 const validationForBookingSchema = Joi.object({
   seatNumber: Joi.number().required(),
   financial_Status: Joi.string().min(6).default("pending"),
+  from: Joi.string().min(2).required(),
+  to: Joi.string().min(2).required(),
+  type: Joi.string().min(6).required(),
+  Boarding: Joi.boolean().default(false),
+  date: Joi.date().optional(),
+  section: Joi.string().required(),
+  bus_no: Joi.string().required(),
 });
 
 const validateBookingBus = Joi.object({

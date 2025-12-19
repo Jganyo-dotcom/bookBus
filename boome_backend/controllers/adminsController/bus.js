@@ -4,6 +4,7 @@ const {
   validateaddingBus,
   validateBoardingBus,
 } = require("../../validations/adminValidations/admin");
+const driverModule = require("../../modules/driver.module");
 
 const add_Bus = async (req, res) => {
   console.log("fired");
@@ -43,7 +44,15 @@ const add_Bus = async (req, res) => {
 
 const deleteBus = async (req, res) => {
   const id = req.params.id;
+  const driver = req.params.di;
   const bus_exists = await BusSchema.findById(id);
+  const bus_driverr = await driverModule.findOne({ _id: driver });
+  if (!bus_driverr) {
+    console.log("didnt ind");
+  }
+  const bus_driver = await driverModule.findByIdAndDelete(driver);
+
+  console.log("deleted driver");
   if (!bus_exists) return res.status(404).json({ message: "bus not found" });
   try {
     const deletebus = await BusSchema.findByIdAndDelete(id);
@@ -61,6 +70,7 @@ const allbuses = async (req, res) => {
   try {
     console.log("bus");
     const allbuses = await BusSchema.find({}).populate("Driver", "name email");
+
     res.status(200).json({ message: "success", allbuses });
   } catch (error) {
     console.error(error);
@@ -72,7 +82,7 @@ const Bus_Boarding = async (req, res) => {
   console.log(req.params.id);
   const Bus_id = req.params.id;
   const { error, value } = validateBoardingBus.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
+  if (error) return res.status(400).json({ message: error.details[0].message });
   try {
     const existing_bus = await BusSchema.findById(Bus_id);
     // find bus no is existing
