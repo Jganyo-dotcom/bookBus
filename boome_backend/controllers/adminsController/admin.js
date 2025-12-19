@@ -203,12 +203,7 @@ const deleteDriver = async (req, res) => {
       _id: id,
       role: "Driver",
     });
-    const dontdelete = await BusModel.findOne({ Driver: id });
-    if (dontdelete)
-      return res
-        .status(400)
-        .json({ message: "driver has a bus delete bus to delete driver" });
-    if (!driver) return res.status(404).json({ message: "driver not found" });
+
     const aboutToDeleteDriver = await driverModule.findByIdAndDelete(id);
 
     return res.status(200).json({ message: "Deleted driver" });
