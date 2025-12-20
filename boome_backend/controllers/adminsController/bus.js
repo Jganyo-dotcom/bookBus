@@ -9,7 +9,6 @@ const driverModule = require("../../modules/driver.module");
 const { cloudinary } = require("../../middlewares/cloud");
 
 const add_Bus = async (req, res) => {
-  console.log("fired");
   const { error, value } = validateaddingBus.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
 
@@ -19,12 +18,15 @@ const add_Bus = async (req, res) => {
     return res.status(400).json({ message: "Bus already exists" });
   }
 
-  // Cloudinary gives you the file path (URL) in req.file.path
-  const imageUrl = req.file ? req.file.path : null;
-  console.log(imageUrl);
-  console.log("Cloudinary URL:", imageUrl);
-
   try {
+    let imageUrl = null;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "buses",
+      });
+      imageUrl = result.secure_url;
+    }
+
     const newbus = new BusSchema({
       Driver: value.Driver,
       Busname: value.Busname,
@@ -32,7 +34,7 @@ const add_Bus = async (req, res) => {
       to: value.to,
       seats: value.seats,
       bus_no: value.bus_no,
-      imageUrl: imageUrl, // 👈 Cloudinary URL
+      imageUrl: imageUrl, // now Cloudinary URL
       type: value.type,
       Boarding: value.Boarding,
       terminal: value.terminal,
@@ -44,7 +46,7 @@ const add_Bus = async (req, res) => {
     await newbus.save();
     res.status(201).json({ message: "Bus has been created", bus: newbus });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: "Something went wrong while saving bus" });
   }
 };

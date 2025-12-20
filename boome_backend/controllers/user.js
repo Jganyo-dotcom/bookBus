@@ -111,6 +111,8 @@ const AlreadyBookedseats = async (req, res) => {
 
 const availableBuses = async (req, res) => {
   try {
+    console.log("hmmmm");
+
     const { error, value } = validateBookingBus.validate(req.body);
     if (error)
       return res.status(400).json({ message: error.details[0].message });
