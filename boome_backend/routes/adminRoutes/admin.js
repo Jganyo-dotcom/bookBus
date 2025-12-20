@@ -19,9 +19,9 @@ const router = express.Router();
 router.post("/login", LoginAdmin);
 router.post("/staff/register", authmiddleware, Checkrole, registerNewStaff);
 router.get("/allguests", authmiddleware, Checkrole, getUsers);
-router.get("/alldrivers", getDrivers);
+router.get("/alldrivers", authmiddleware, Checkrole, getDrivers);
 router.get("/driver", authmiddleware, Checkrole, getOneDriver); //query name
-router.get("/Admin/buses", allbuses);
+router.get("/Admin/buses", authmiddleware, Checkrole, allbuses);
 router.post("/driver/register", authmiddleware, registerNewDriver);
 router.delete("/delete/driver/:id", authmiddleware, deleteDriver);
 router.get("/delete/sta/:id", authmiddleware, getStaffandDelete);
