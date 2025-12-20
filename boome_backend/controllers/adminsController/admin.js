@@ -199,19 +199,28 @@ const deleteDriver = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const driver = await driverModule.find({
-      _id: id,
-      role: "Driver",
-    });
+    // Check if driver exists
+    const driver = await driverModule.findOne({ _id: id, role: "Driver" });
+    if (!driver) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
 
-    const aboutToDeleteDriver = await driverModule.findByIdAndDelete(id);
+    // Check if driver is linked to a bus
+    const bus = await BusModel.findOne({ Driver: id });
+    if (bus) {
+      return res.status(400).json({
+        message: "Driver has a bus. Delete the bus first to delete driver",
+      });
+    }
 
+    // Delete driver
+    await driverModule.findByIdAndDelete(id);
     return res.status(200).json({ message: "Deleted driver" });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "something went wrong in deleting Driver" });
+      .json({ message: "Something went wrong in deleting driver" });
   }
 };
 

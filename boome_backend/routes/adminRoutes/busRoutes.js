@@ -12,7 +12,7 @@ const {
   CheckroleonAll,
 } = require("../../middlewares/role");
 const { AlreadyBookedseats } = require("../../controllers/user");
-const upload = require("../../middlewares/multer");
+const { upload } = require("../../middlewares/cloud");
 const authmiddleware = require("../../middlewares/auth");
 const router = express.Router();
 

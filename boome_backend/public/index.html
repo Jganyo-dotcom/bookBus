@@ -521,13 +521,11 @@
                 <option value="">From (select)</option>
                 <option value="Accra">Accra</option>
                 <option value="Kumasi">Kumasi</option>
-                <option value="Wa">Wa</option>
               </select>
               <select id="to" class="select">
                 <option value="">To (select)</option>
                 <option value="Accra">Accra</option>
                 <option value="Kumasi">Kumasi</option>
-                <option value="Wa">Wa</option>
               </select>
             </div>
             <div>
@@ -550,7 +548,7 @@
               </select>
             </div>
           </div>
-          <input type="file" id="image" class="input" />
+          <input type="file" name="image" id="image" class="input" />
           <button class="btn" onclick="createBus()">Create bus</button>
         </div>
 
@@ -734,7 +732,7 @@
           const data = await res.json();
           const busesArray =
             data.allbuses ?? data.buses ?? (data.bus ? [data.bus] : []);
-          if (data.message) alert(data.message);
+          if (data.message) console.log(data.message);
           renderBuses(busesArray);
         } catch (err) {
           alert("Failed to fetch buses");
@@ -942,7 +940,6 @@
             alert(data.message || "Delete failed");
             return;
           }
-          alert(data.message || "Driver deleted");
           closeModalll();
           fetchdrivers();
         } catch (err) {
@@ -1076,6 +1073,7 @@
           document.getElementById("driverId").value = "";
           document.getElementById("driverResult").innerHTML = "";
         } catch (err) {
+          console.error("Create bus error:", err);
           alert("Bus creation failed");
         } finally {
           hideLoader();

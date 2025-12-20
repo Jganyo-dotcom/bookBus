@@ -625,14 +625,12 @@
           <option value="">From</option>
           <option value="Accra">Accra</option>
           <option value="Kumasi">Kumasi</option>
-          <option value="Wa">Wa</option>
         </select>
 
         <select id="bkTo">
           <option value="">To</option>
           <option value="Accra">Accra</option>
           <option value="Kumasi">Kumasi</option>
-          <option value="Wa">Wa</option>
         </select>
         <label class="small">Travel date</label>
         <input id="bkDate" type="date" required />
@@ -1044,7 +1042,6 @@
             bookingError.style.display = "block";
             return;
           }
-          alert(data.message || "NONE");
           renderBusResults(data.Buses || data.message);
         } catch (err) {
           hideLoader();

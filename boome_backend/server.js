@@ -16,7 +16,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
 const mongoose = require("mongoose");
 
 app.get("/", (req, res) => {
