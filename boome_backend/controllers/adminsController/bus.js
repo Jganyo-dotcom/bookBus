@@ -7,6 +7,7 @@ const {
 const driverModule = require("../../modules/driver.module");
 
 const { cloudinary } = require("../../middlewares/cloud");
+const booked_buses = require("../../modules/booked_buses");
 
 const add_Bus = async (req, res) => {
   const { error, value } = validateaddingBus.validate(req.body);
@@ -132,6 +133,28 @@ const Bus_Boarding = async (req, res) => {
   }
 };
 
+const updateBus = async (req, res) => {
+  console.log(req.params.id);
+  const Bus_id = req.params.id;
+  const { error, value } = validateBoardingBus.validate(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+  try {
+    const existing_bus = await booked_buses.find({ Bus: Bus_id });
+    // find bus no is existing
+    if (!existing_bus) {
+      return res.status(404).json({ mesage: "bus not found" });
+    }
+    const Board = await booked_buses.findOneAndUpdate(value, {
+      new: true,
+      runValidators: true,
+    });
+    return res.status(200).json({ message: "Success" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
+  }
+};
+
 const queryBus = async (req, res) => {
   const BusNo = req.query.number;
   console.log(BusNo);
@@ -150,4 +173,4 @@ const queryBus = async (req, res) => {
   }
 };
 
-module.exports = { add_Bus, deleteBus, allbuses, Bus_Boarding, queryBus };
+module.exports = { add_Bus, deleteBus, allbuses, Bus_Boarding, queryBus ,updateBus};

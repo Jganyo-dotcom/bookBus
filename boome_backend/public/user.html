@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <title>BookBus – User Booking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <style>
       :root {
         --primary: #0d6efd;
@@ -18,115 +17,29 @@
         --danger: #dc3545;
         --success: #198754;
       }
-
       * {
         box-sizing: border-box;
       }
-
       body {
         margin: 0;
         padding: 20px;
         font-family: "Segoe UI", system-ui, sans-serif;
         background: linear-gradient(135deg, #e2e8f0, #f8fafc);
         color: var(--text);
-
-        /* CENTER EVERYTHING */
         display: flex;
         justify-content: center;
         align-items: center;
-
         min-height: 100vh;
       }
-
-      h1,
-      h2,
-      h3 {
-        margin: 0 0 12px;
-      }
-
-      h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 26px;
-      }
-
-      p {
-        margin: 0 0 8px;
-      }
-
-      a {
-        color: var(--primary);
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
       .container {
-        max-width: 900px;
-        margin: 0 auto;
-      }
-
-      .modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
+        max-width: 980px;
         width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
       }
-
-      .modal-content {
-        background: #fff;
-        border-radius: 8px;
-        padding: 20px;
-        width: 400px;
-        max-width: 90%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        animation: fadeIn 0.3s ease;
-      }
-
-      .close-btn {
-        float: right;
-        font-size: 24px;
-        cursor: pointer;
-      }
-
-      .trip-details-card {
-        font-family: "Segoe UI", sans-serif;
-        color: #333;
-      }
-
-      .trip-title {
-        margin-bottom: 12px;
+      h1 {
+        font-size: 26px;
         text-align: center;
-        color: #3498db;
+        margin: 0 0 20px;
       }
-
-      .trip-section {
-        margin-bottom: 10px;
-      }
-
-      .trip-section p {
-        margin: 4px 0;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
       .card {
         background: var(--card);
         border-radius: 18px;
@@ -135,24 +48,21 @@
         padding: 20px;
         margin-bottom: 20px;
       }
-
       .card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
       }
-
       .card-header h2 {
         font-size: 20px;
+        margin: 0;
       }
-
       .tabs {
         display: flex;
         gap: 10px;
         margin-bottom: 15px;
       }
-
       .tab-btn {
         flex: 1;
         padding: 10px;
@@ -162,13 +72,16 @@
         font-size: 14px;
         cursor: pointer;
       }
-
       .tab-btn.active {
         background: var(--primary);
         color: #fff;
         border-color: var(--primary-dark);
       }
-
+      input,
+      select,
+      button {
+        font-size: 14px;
+      }
       input,
       select {
         width: 100%;
@@ -176,112 +89,113 @@
         border-radius: 10px;
         border: 1px solid var(--border);
         margin: 6px 0 12px;
-        font-size: 14px;
-        outline: none;
         background: #fff;
+        outline: none;
       }
-
       input:focus,
       select:focus {
         border-color: var(--primary);
       }
-
       button {
         padding: 11px 16px;
         border-radius: 10px;
         border: none;
         background: var(--primary);
         color: #fff;
-        font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        transition: 0.15s ease;
+        transition: 0.15s;
       }
-
       button:hover {
         background: var(--primary-dark);
         transform: translateY(-1px);
       }
-
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-      }
-
       .btn-outline {
         background: #fff;
         color: var(--primary);
         border: 1px solid var(--primary);
       }
-
-      .text-center {
-        text-align: center;
-      }
-
       .small {
         font-size: 13px;
         color: var(--muted);
       }
-
       .error-text {
         color: var(--danger);
         font-size: 13px;
         margin-bottom: 8px;
       }
-
       .success-text {
         color: var(--success);
         font-size: 13px;
         margin-bottom: 8px;
       }
 
-      /* GRID FOR BUS CARDS */
+      /* Bus grid */
       .bus-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 14px;
       }
-
       .bus-card {
-        background: #ffffff;
+        background: #fff;
         border-radius: 14px;
         border: 1px solid var(--border);
         overflow: hidden;
         display: flex;
         flex-direction: column;
         cursor: pointer;
-        transition: 0.15s ease;
+        transition: 0.15s;
       }
-
       .bus-card:hover {
         transform: translateY(-2px);
         box-shadow: var(--shadow);
       }
-
       .bus-image {
         width: 100%;
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 4/3;
         object-fit: cover;
         background: #e5e7eb;
       }
-
       .bus-body {
         padding: 8px 10px 10px;
       }
-
       .bus-title {
         font-size: 14px;
         font-weight: 600;
         margin-bottom: 3px;
       }
-
       .bus-meta {
         font-size: 12px;
         color: var(--muted);
       }
 
-      /* BOOKINGS LIST */
+      /* Pagination */
+      .pagination {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .page-btn {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #fff;
+        cursor: pointer;
+      }
+      .page-btn.active {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary-dark);
+      }
+      .page-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* Bookings list */
       .booking-item {
         border-radius: 12px;
         border: 1px solid var(--border);
@@ -292,24 +206,21 @@
         gap: 8px;
         align-items: center;
       }
-
       .badge {
         padding: 3px 7px;
         border-radius: 999px;
         font-size: 11px;
       }
-
       .badge.pending {
         background: rgba(220, 53, 69, 0.08);
         color: var(--danger);
       }
-
       .badge.confirmed {
         background: rgba(25, 135, 84, 0.08);
         color: var(--success);
       }
 
-      /* MODAL */
+      /* Modal backdrop */
       .modal-backdrop {
         position: fixed;
         inset: 0;
@@ -319,35 +230,41 @@
         justify-content: center;
         z-index: 999;
       }
-
       .modal {
         max-width: 420px;
         width: 90%;
         background: #fff;
         border-radius: 18px;
         box-shadow: var(--shadow);
-        padding: 18px 18px 16px;
+        padding: 18px;
       }
-
       .modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
       }
-
-      .modal-header h3 {
-        font-size: 18px;
-      }
-
       .modal-footer {
         display: flex;
         justify-content: flex-end;
         gap: 8px;
         margin-top: 12px;
       }
+      .modal-content {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        width: 400px;
+        max-width: 90%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+      .close-btn {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+      }
 
-      /* LOADER */
+      /* Loader */
       #loader {
         position: fixed;
         inset: 0;
@@ -358,7 +275,6 @@
         z-index: 1000;
         backdrop-filter: blur(2px);
       }
-
       .spinner {
         width: 52px;
         height: 52px;
@@ -367,105 +283,13 @@
         border-top-color: var(--primary);
         animation: spin 0.8s linear infinite;
       }
-
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
 
-      /* RESPONSIVE */
-      @media (max-width: 768px) {
-        body {
-          padding: 14px;
-        }
-
-        h1 {
-          font-size: 22px;
-        }
-
-        .card {
-          padding: 16px;
-        }
-
-        .bus-grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-
-      @media (max-width: 480px) {
-        body {
-          padding: 10px;
-        }
-
-        h1 {
-          font-size: 20px;
-        }
-
-        .bus-grid {
-          grid-template-columns: 1fr;
-        }
-
-        button {
-          width: 100%;
-        }
-
-        .modal {
-          padding: 16px 14px;
-        }
-      }
-
-      /* Small devices */
-      @media (max-width: 768px) {
-        body {
-          padding: 12px;
-        }
-        h1 {
-          font-size: 22px;
-        }
-        .card {
-          padding: 16px;
-        }
-        .bus-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
-        }
-        .tab-btn {
-          font-size: 13px;
-          padding: 8px;
-        }
-      }
-
-      /* Extra small devices */
-      @media (max-width: 480px) {
-        body {
-          padding: 8px;
-        }
-        h1 {
-          font-size: 20px;
-        }
-        .bus-grid {
-          grid-template-columns: 1fr;
-        }
-        input,
-        select,
-        button {
-          font-size: 13px;
-          padding: 10px;
-        }
-        button {
-          width: 100%;
-          margin-top: 10px;
-        }
-        .modal {
-          padding: 14px;
-          border-radius: 12px;
-        }
-        .modal-header h3 {
-          font-size: 16px;
-        }
-      }
-
+      /* Seats */
       .seat-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
@@ -482,31 +306,21 @@
         border: 1px solid var(--border);
       }
       .seat.taken {
-        background: #dc3545; /* red for taken */
+        background: #dc3545;
         color: #fff;
         cursor: not-allowed;
       }
       .seat.available {
-        background: #198754; /* green for available */
+        background: #198754;
         color: #fff;
       }
       .seat.selected {
-        background: #0d6efd; /* blue for selected */
+        background: var(--primary);
         color: #fff;
         font-weight: 600;
       }
-      @media (max-width: 480px) {
-        .seat-grid {
-          grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
-          gap: 6px;
-        }
-        .seat {
-          font-size: 12px;
-          padding: 8px;
-        }
-      }
 
-      /* Floating widget */
+      /* Floating messages */
       .messages-widget {
         position: fixed;
         bottom: 20px;
@@ -521,11 +335,10 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        transition: 0.2s ease;
         z-index: 1000;
       }
       .messages-widget:hover {
-        background: var(--secondary);
+        background: var(--primary-dark);
         transform: translateY(-2px);
       }
       .badge-count {
@@ -537,35 +350,139 @@
         font-weight: 600;
       }
 
-      /* Messages modal */
-      #messagesList .message-item {
-        border-bottom: 1px solid var(--border);
-        padding: 10px;
+      /* Responsive */
+      @media (max-width: 768px) {
+        .bus-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .card {
+          padding: 16px;
+        }
+        h1 {
+          font-size: 22px;
+        }
       }
-      #messagesList .message-text {
+      @media (max-width: 480px) {
+        .bus-grid {
+          grid-template-columns: 1fr;
+        }
+        button {
+          width: 100%;
+        }
+        .seat-grid {
+          grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+          gap: 6px;
+        }
+      }
+      /* News ticker wrapper (fixed at bottom, above messages widget) */
+      /* Place ticker at the very bottom of the viewport */
+      #newsTickerWrapper {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0; /* moved to the very bottom */
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 1200;
+      }
+
+      /* Ticker container */
+      #newsTicker {
+        pointer-events: auto;
+        width: min(100%, 980px);
+        max-width: 980px;
+        background: blueviolet
+        color: #fff;
+        border-radius: 999px;
+        padding: 8px 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      /* Inner moving element */
+      #newsTickerInner {
+        display: inline-block;
+        white-space: nowrap;
+        font-weight: 600;
         font-size: 14px;
-        margin-bottom: 4px;
+        letter-spacing: 0.2px;
+        transform: translateX(0);
+        animation: tickerMove 18s linear infinite alternate;
       }
-      #messagesList .message-date {
-        font-size: 12px;
-        color: var(--muted);
+
+      /* Pause animation on hover */
+      #newsTicker:hover #newsTickerInner {
+        animation-play-state: paused;
+        cursor: pointer;
+      }
+
+      /* Keyframes: gentle back-and-forth */
+      @keyframes tickerMove {
+        0% {
+          transform: translateX(-10%);
+        }
+        50% {
+          transform: translateX(10%);
+        }
+        100% {
+          transform: translateX(-10%);
+        }
+      }
+
+      /* Ensure the floating messages widget sits above the ticker */
+      .messages-widget {
+        position: fixed;
+        bottom: 64px; /* moved up so it doesn't overlap the ticker */
+        right: 20px;
+        background: var(--primary);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 50px;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s ease;
+        z-index: 1300; /* higher than ticker */
+      }
+
+      /* Mobile adjustments */
+      @media (max-width: 480px) {
+        #newsTickerInner {
+          animation-duration: 26s;
+          font-size: 13px;
+        }
+        #newsTickerWrapper {
+          bottom: 0;
+        }
+        .messages-widget {
+          bottom: 84px;
+        } /* give extra space on small screens */
       }
     </style>
   </head>
-
   <body>
-    <div id="loader">
-      <div class="spinner"></div>
+    <!-- News ticker -->
+    <div id="newsTickerWrapper" aria-live="polite">
+      <div id="newsTicker">
+        <div id="newsTickerInner">
+          Welcome to BookBus — Find the best routes and book with ease.
+        </div>
+      </div>
     </div>
+
+    <div id="loader"><div class="spinner"></div></div>
 
     <div class="container">
       <h1>Find & Book Your Bus with Elikem</h1>
 
       <!-- AUTH CARD -->
       <div class="card" id="authCard">
-        <div class="card-header">
-          <h2>Account</h2>
-        </div>
+        <div class="card-header"><h2>Account</h2></div>
 
         <div class="tabs">
           <button class="tab-btn active" id="loginTab">Login</button>
@@ -575,7 +492,6 @@
         <div id="authError" class="error-text" style="display: none"></div>
         <div id="authSuccess" class="success-text" style="display: none"></div>
 
-        <!-- LOGIN FORM -->
         <div id="loginForm">
           <input id="loginEmail" type="email" placeholder="Email" />
           <input
@@ -593,7 +509,6 @@
           </p>
         </div>
 
-        <!-- REGISTER FORM -->
         <div id="registerForm" style="display: none">
           <input id="regName" type="text" placeholder="Full Name" />
           <input id="regEmail" type="email" placeholder="Email" />
@@ -611,64 +526,94 @@
         </div>
       </div>
 
-      <!-- BOOKING CARD (HIDDEN UNTIL LOGGED IN) -->
+      <!-- BOOKING CARD -->
       <div class="card" id="bookingCard" style="display: none">
         <div class="card-header">
           <h2>Book a Bus</h2>
           <button class="btn-outline" onclick="handleLogout()">Logout</button>
         </div>
+
         <p class="small" style="margin-bottom: 10px">
           Fill the form to search for available buses.
         </p>
 
-        <select id="bkFrom">
-          <option value="">From</option>
-          <option value="Accra">Accra</option>
-          <option value="Kumasi">Kumasi</option>
-        </select>
+        <!-- Hidden passenger name -->
+        <input id="bkName" type="hidden" />
 
-        <select id="bkTo">
-          <option value="">To</option>
-          <option value="Accra">Accra</option>
-          <option value="Kumasi">Kumasi</option>
-        </select>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+          "
+        >
+          <select id="bkFrom">
+            <option value="">From</option>
+            <option value="Accra">Accra</option>
+            <option value="Kumasi">Kumasi</option>
+          </select>
+
+          <select id="bkTo">
+            <option value="">To</option>
+            <option value="Accra">Accra</option>
+            <option value="Kumasi">Kumasi</option>
+          </select>
+        </div>
+
         <label class="small">Travel date</label>
         <input id="bkDate" type="date" required />
 
-        <label class="small">Bus type</label>
-        <select id="bkType">
-          <option value="">Any type</option>
-          <option value="luxury">luxury</option>
-          <option value="economy">Economy</option>
-        </select>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+          "
+        >
+          <select id="bkType">
+            <option value="">Any type</option>
+            <option value="luxury">luxury</option>
+            <option value="economy">Economy</option>
+          </select>
 
-        <label class="small">Section</label>
-        <select id="bkSection">
-          <option value="morning">Morning</option>
-          <option value="evening">Evening</option>
-        </select>
+          <select id="bkSection">
+            <option value="">Section</option>
+            <option value="morning">Morning</option>
+            <option value="evening">Evening</option>
+          </select>
+
+          <select id="bkseats">
+            <option value="">Seats</option>
+            <option value="55">55</option>
+            <option value="15">15</option>
+          </select>
+        </div>
 
         <input type="hidden" id="bkBoard" value="false" />
 
-        <label class="small">size</label>
-        <select id="bkseats">
-          <option value="55">55</option>
-          <option value="15">15</option>
-        </select>
         <div id="bookingError" class="error-text" style="display: none"></div>
-        <button onclick="searchBuses()">Search Buses</button>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+          <button onclick="searchBuses()">Search Buses</button>
+          <button class="btn-outline" onclick="BringAllBuss()">
+            View All Available
+          </button>
+        </div>
 
         <div id="busResults" style="margin-top: 16px; display: none">
           <h3 style="font-size: 16px; margin-bottom: 8px">Available buses</h3>
           <div id="busList" class="bus-grid"></div>
+          <div
+            id="paginationControls"
+            class="pagination"
+            aria-label="Pagination"
+          ></div>
         </div>
       </div>
 
       <!-- BOOKINGS CARD -->
       <div class="card" id="myBookingsCard" style="display: none">
-        <div class="card-header">
-          <h2>My Bookings</h2>
-        </div>
+        <div class="card-header"><h2>My Bookings</h2></div>
         <div id="bookingsEmpty" class="small">
           No bookings yet. Search and book a bus to see it here.
         </div>
@@ -676,7 +621,8 @@
       </div>
     </div>
 
-    <div id="tripDetailsBackdrop" class="modal-backdrop" style="display: none">
+    <!-- Trip details modal -->
+    <div id="tripDetailsBackdrop" class="modal-backdrop">
       <div class="modal-content">
         <span
           class="close-btn"
@@ -687,6 +633,7 @@
       </div>
     </div>
 
+    <!-- Booking modal -->
     <div id="bookingModalBackdrop" class="modal-backdrop">
       <div class="modal">
         <div class="modal-header">
@@ -698,17 +645,15 @@
           <button class="btn-outline" onclick="closeBookingModal()">
             Cancel
           </button>
-          <!-- New Pick Seat button -->
           <button class="btn-outline" onclick="openSeatModal()">
             Pick Seat
           </button>
-          <!-- Book button -->
           <button onclick="confirmBooking()">Book</button>
         </div>
       </div>
     </div>
 
-    <!-- Seat Selection Modal -->
+    <!-- Seat modal -->
     <div id="seatModalBackdrop" class="modal-backdrop">
       <div class="modal">
         <div class="modal-header">
@@ -718,14 +663,19 @@
         <div id="seatGrid" class="seat-grid"></div>
         <div class="modal-footer">
           <button class="btn-outline" onclick="closeSeatModal()">Cancel</button>
-          <button id="confirmSeatBtn" onclick="saveSeatSelection()" disabled>
+          <button
+            id="confirmSeatBtn"
+            class="btn-outline"
+            onclick="saveSeatSelection()"
+            disabled
+          >
             Confirm Seat
           </button>
         </div>
       </div>
     </div>
 
-    <!-- MODAL FOR PAY (UI ONLY FOR NOW) -->
+    <!-- Pay modal -->
     <div id="payModalBackdrop" class="modal-backdrop">
       <div class="modal">
         <div class="modal-header">
@@ -739,7 +689,8 @@
         </div>
       </div>
     </div>
-    <!-- Floating Messages Button -->
+
+    <!-- Messages widget -->
     <div
       id="messagesWidget"
       class="messages-widget"
@@ -748,7 +699,7 @@
       💬 <span id="messagesBadge" class="badge-count">0</span>
     </div>
 
-    <!-- Messages Modal -->
+    <!-- Messages modal -->
     <div id="messagesModalBackdrop" class="modal-backdrop">
       <div class="modal">
         <div class="modal-header">
@@ -763,43 +714,71 @@
     </div>
 
     <script>
+      // News ticker messages and rotation
+      (function setupNewsTicker() {
+        const messages = [
+          "Welcome to BookBus — Find the best routes and book with ease.",
+          "Tip: Use View All Available to browse all buses filter with the search box.",
+          "Pick a seat after selecting a bus to secure your preferred spot.",
+          "Need help? Open the messages widget to contact admin.",
+        ];
+
+        const inner = document.getElementById("newsTickerInner");
+        if (!inner) return;
+
+        let idx = 0;
+        // Update the text every 8 seconds, fading between messages
+        function showNextMessage() {
+          idx = (idx + 1) % messages.length;
+          // fade out, change text, fade in
+          inner.style.transition = "opacity 400ms ease";
+          inner.style.opacity = "0";
+          setTimeout(() => {
+            inner.textContent = messages[idx];
+            inner.style.opacity = "1";
+          }, 420);
+        }
+
+        // Start rotation after a short delay so users see the first message
+        const rotateInterval = 8000; // 8 seconds per message
+        const rotateTimer = setInterval(showNextMessage, rotateInterval);
+
+        // Optional: expose a function to update messages dynamically
+        window.updateNewsTickerMessages = function (newMessages) {
+          if (!Array.isArray(newMessages) || newMessages.length === 0) return;
+          messages.length = 0;
+          newMessages.forEach((m) => messages.push(m));
+          idx = -1;
+          showNextMessage();
+          clearInterval(rotateTimer);
+          setInterval(showNextMessage, rotateInterval);
+        };
+
+        // Ensure initial opacity is 1
+        inner.style.opacity = "1";
+      })();
+
+      /* State */
       let authToken = "";
       let selectedBus = null;
+      let selectedSeat = null;
       let currentSearchData = null;
       let bookingToPay = null;
-      // 10 minutes in milliseconds
-      const POLL_INTERVAL = 10 * 60 * 1000; // 600,000 ms
-
       let messages = [];
-      // Fetch messages from backend
-      async function fetchMessages() {
-        try {
-          const res = await fetch("/guest/messages", {
-            headers: { Authorization: `Bearer ${authToken}` },
-          });
-          const data = await res.json();
-          if (!res.ok) return;
 
-          messages = data.messages || [];
-          updateMessagesBadge();
-        } catch (err) {
-          console.log("Failed to fetch messages", err);
-        }
-      }
+      // Pagination state for "available buses" and for search results
+      let availablePage = 1;
+      let availableLimit = 9;
+      let availableTotalPages = 1;
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const dateEl = document.getElementById("bkDate");
-        const today = new Date().toISOString().split("T")[0];
-        dateEl.min = today;
-        dateEl.value = today; // optional
-      });
+      let searchPage = 1;
+      let searchLimit = 9;
+      let searchTotalPages = 1;
 
-      // Start polling after login
-      function startMessagePolling() {
-        fetchMessages(); // fetch immediately
-        setInterval(fetchMessages, POLL_INTERVAL);
-      }
-      // UTIL: Loader
+      const POLL_INTERVAL = 10 * 60 * 1000; // 10 minutes
+      const BOOKING_INTERVAL = 10 * 60 * 1000;
+
+      /* Loader */
       function showLoader() {
         document.getElementById("loader").style.display = "flex";
       }
@@ -807,7 +786,7 @@
         document.getElementById("loader").style.display = "none";
       }
 
-      // AUTH TABS
+      /* Auth tabs */
       const loginTab = document.getElementById("loginTab");
       const registerTab = document.getElementById("registerTab");
       const loginForm = document.getElementById("loginForm");
@@ -819,7 +798,6 @@
         authError.style.display = "none";
         authSuccess.style.display = "none";
       }
-
       function switchToRegister() {
         clearAuthMessages();
         loginTab.classList.remove("active");
@@ -827,7 +805,6 @@
         loginForm.style.display = "none";
         registerForm.style.display = "block";
       }
-
       function switchToLogin() {
         clearAuthMessages();
         loginTab.classList.add("active");
@@ -836,19 +813,17 @@
         registerForm.style.display = "none";
       }
 
-      // AUTH: Register
+      /* Register */
       async function handleRegister() {
         clearAuthMessages();
         const name = document.getElementById("regName").value.trim();
         const email = document.getElementById("regEmail").value.trim();
         const password = document.getElementById("regPassword").value.trim();
-
         if (!name || !email || !password) {
           authError.textContent = "Please fill all fields.";
           authError.style.display = "block";
           return;
         }
-
         try {
           showLoader();
           const res = await fetch("/guest/register", {
@@ -858,18 +833,15 @@
           });
           const data = await res.json();
           hideLoader();
-
           if (!res.ok) {
             authError.textContent =
               data.message || data.error || "Registration failed.";
             authError.style.display = "block";
             return;
           }
-
           authSuccess.textContent =
             data.message ||
             "Registration successful. Please login to continue.";
-
           authSuccess.style.display = "block";
           switchToLogin();
         } catch (err) {
@@ -879,18 +851,16 @@
         }
       }
 
-      // AUTH: Login
+      /* Login */
       async function handleLogin() {
         clearAuthMessages();
         const email = document.getElementById("loginEmail").value.trim();
         const password = document.getElementById("loginPassword").value.trim();
-
         if (!email || !password) {
           authError.textContent = "Please enter email and password.";
           authError.style.display = "block";
           return;
         }
-
         try {
           showLoader();
           const res = await fetch("/guest/login", {
@@ -900,14 +870,12 @@
           });
           const data = await res.json();
           hideLoader();
-
           if (!res.ok || !data.token) {
             authError.textContent =
               data.message || "Login failed. Check your credentials.";
             authError.style.display = "block";
             return;
           }
-          data.message;
           authToken = data.token;
           localStorage.setItem("userToken", authToken);
           localStorage.setItem("userName", data.name || "");
@@ -919,7 +887,7 @@
         }
       }
 
-      // LOGOUT
+      /* Logout */
       function handleLogout() {
         authToken = "";
         localStorage.removeItem("userToken");
@@ -929,120 +897,145 @@
         document.getElementById("authCard").style.display = "block";
       }
 
-      // SHOW BOOKING UI AFTER LOGIN
+      /* Show booking UI */
       function showBookingUI() {
         document.getElementById("authCard").style.display = "none";
         document.getElementById("bookingCard").style.display = "block";
         document.getElementById("myBookingsCard").style.display = "block";
-
         const storedName = localStorage.getItem("userName") || "";
-        if (storedName) {
-          document.getElementById("bkName").value = storedName;
-        }
-
+        document.getElementById("bkName").value = storedName;
         loadMyBookings();
         startMessagePolling();
+        startUpdatePolling();
       }
 
-      // ON LOAD: Check token
+      /* Init */
       (function init() {
         const token = localStorage.getItem("userToken");
         if (token) {
           authToken = token;
           showBookingUI();
         }
+        // set date min
+        document.addEventListener("DOMContentLoaded", () => {
+          const dateEl = document.getElementById("bkDate");
+          const today = new Date().toISOString().split("T")[0];
+          dateEl.min = today;
+          dateEl.value = today;
+        });
       })();
 
-      // Polling interval (10 minutes)
-
-      // Update badge count
-      function updateMessagesBadge() {
-        const badge = document.getElementById("messagesBadge");
-        badge.textContent = messages.length;
+      /* Polling */
+      function startMessagePolling() {
+        fetchMessages();
+        setInterval(fetchMessages, POLL_INTERVAL);
+      }
+      function startUpdatePolling() {
+        loadMyBookings();
+        setInterval(loadMyBookings, BOOKING_INTERVAL);
       }
 
-      // Open modal
+      /* Messages */
+      async function fetchMessages() {
+        try {
+          const res = await fetch("/guest/messages", {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await res.json();
+          if (!res.ok) return;
+          messages = data.messages || [];
+          updateMessagesBadge();
+        } catch (err) {
+          console.log("Failed to fetch messages", err);
+        }
+      }
+      function updateMessagesBadge() {
+        document.getElementById("messagesBadge").textContent = messages.length;
+      }
       function openMessagesModal() {
         const list = document.getElementById("messagesList");
         list.innerHTML = "";
-
         if (!messages.length) {
           list.innerHTML = "<p class='small'>No messages from admin.</p>";
         } else {
           messages.forEach((m) => {
             const item = document.createElement("div");
             item.className = "message-item";
-            item.innerHTML = `
-        <div class="message-text">${m.text}</div>
-        <div class="message-date">${new Date(m.date).toLocaleString()}</div>
-      `;
+            item.innerHTML = `<div class="message-text">${
+              m.text
+            }</div><div class="message-date">${new Date(
+              m.date
+            ).toLocaleString()}</div>`;
             list.appendChild(item);
           });
         }
-
         document.getElementById("messagesModalBackdrop").style.display = "flex";
       }
-
-      // Close modal
       function closeMessagesModal() {
         document.getElementById("messagesModalBackdrop").style.display = "none";
       }
 
-      // Call startMessagePolling() inside your showBookingUI() after login
-
-      // SEARCH BUSES
-      async function searchBuses() {
+      /* SEARCH (POST) - uses /guest/booking endpoint */
+      async function searchBuses(page = 1, limit = searchLimit) {
         const bookingError = document.getElementById("bookingError");
         bookingError.style.display = "none";
-
+        const name = document.getElementById("bkName").value.trim();
         const from = document.getElementById("bkFrom").value.trim();
         const to = document.getElementById("bkTo").value.trim();
         const rawDate = document.getElementById("bkDate").value;
-        const date = new Date(rawDate).toISOString().split("T")[0];
+        const date = rawDate
+          ? new Date(rawDate).toISOString().split("T")[0]
+          : "";
         const type = document.getElementById("bkType").value;
         const section = document.getElementById("bkSection").value;
-        console.log(section);
         const Boarding = document.getElementById("bkBoard").value;
         const seats = document.getElementById("bkseats").value;
+
         if (!from || !to || !date || !section) {
-          bookingError.textContent =
-            "Please fill name, from, to, date and section.";
+          bookingError.textContent = "Please fill from, to, date and section.";
           bookingError.style.display = "block";
           return;
         }
 
-        currentSearchData = { name, from, to, date, type, section };
+        currentSearchData = { name, from, to, date, type, section, Boarding };
 
         try {
           showLoader();
-          // Adjust endpoint & body to match your backend
-          const res = await fetch("/guest/booking", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${authToken}`,
-            },
-            body: JSON.stringify({
-              from,
-              to,
-              date,
-              type,
-              section,
-              Boarding,
-              seats,
-            }),
-          });
-
+          const res = await fetch(
+            `/guest/booking?page=${page}&limit=${limit}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+              body: JSON.stringify({
+                from,
+                to,
+                date,
+                type,
+                section,
+                Boarding,
+                seats,
+              }),
+            }
+          );
           const data = await res.json();
           hideLoader();
-
           if (!res.ok) {
-            alert(data.message || "NONE");
             bookingError.textContent = data.message || "Could not fetch buses.";
             bookingError.style.display = "block";
             return;
           }
-          renderBusResults(data.Buses || data.message);
+          // Expecting { Buses:[], totalPages, currentPage }
+          const buses = data.Buses || [];
+          searchTotalPages = data.totalPages || 1;
+          searchPage = data.currentPage || page;
+          renderBusResults(buses, {
+            mode: "search",
+            totalPages: searchTotalPages,
+            currentPage: searchPage,
+          });
         } catch (err) {
           hideLoader();
           bookingError.textContent = "Network error. Try again.";
@@ -1050,19 +1043,86 @@
         }
       }
 
-      function renderBusResults(buses) {
+      /* VIEW ALL AVAILABLE (GET) - supports filters and pagination */
+      function BringAllBuss(page = 1, limit = availableLimit) {
+        // collect filters from the same inputs so "View All" respects them
+        const from = document.getElementById("bkFrom").value.trim();
+        const to = document.getElementById("bkTo").value.trim();
+        const type = document.getElementById("bkType").value;
+        const section = document.getElementById("bkSection").value;
+        const seats = document.getElementById("bkseats").value;
+        const date = document.getElementById("bkDate").value;
+        // build query string
+        const params = new URLSearchParams();
+        params.set("page", page);
+        params.set("limit", limit);
+        if (from) params.set("from", from);
+        if (to) params.set("to", to);
+        if (type) params.set("type", type);
+        if (section) params.set("section", section);
+        if (seats) params.set("seats", seats);
+        if (date) params.set("date", date);
+        fetchBuses(`/guest/availableBuses?${params.toString()}`, {
+          mode: "available",
+        });
+      }
+
+      /* Generic fetch for GET paginated endpoints */
+      async function fetchBuses(url, opts = { mode: "available" }) {
+        try {
+          showLoader();
+          const res = await fetch(url, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await res.json();
+          hideLoader();
+          if (!res.ok) {
+            alert(data.message || "Failed to fetch buses");
+            return;
+          }
+          const buses = data.Buses || [];
+          const totalPages = data.totalPages || 1;
+          const currentPage = data.currentPage || 1;
+          if (opts.mode === "available") {
+            availableTotalPages = totalPages;
+            availablePage = currentPage;
+            renderBusResults(buses, {
+              mode: "available",
+              totalPages,
+              currentPage,
+            });
+          } else {
+            renderBusResults(buses, {
+              mode: "available",
+              totalPages,
+              currentPage,
+            });
+          }
+        } catch (err) {
+          hideLoader();
+          console.error(err);
+          alert("Failed to fetch buses");
+        }
+      }
+
+      /* Render bus cards and pagination */
+      function renderBusResults(
+        buses,
+        meta = { mode: "available", totalPages: 1, currentPage: 1 }
+      ) {
         const busResults = document.getElementById("busResults");
         const busList = document.getElementById("busList");
+        const paginationControls =
+          document.getElementById("paginationControls");
         busList.innerHTML = "";
+        paginationControls.innerHTML = "";
+        busResults.style.display = "block";
 
-        if (!buses.length) {
-          busResults.style.display = "block";
+        if (!Array.isArray(buses) || buses.length === 0) {
           busList.innerHTML =
-            '<p class="small">No buses available for that date/section.</p>';
+            '<p class="small">No buses available for that query.</p>';
           return;
         }
-
-        busResults.style.display = "block";
 
         buses.forEach((bus) => {
           const card = document.createElement("div");
@@ -1081,35 +1141,128 @@
           title.className = "bus-title";
           title.textContent = bus.Busname || bus.name || "Bus";
 
-          const meta = document.createElement("div");
-          meta.className = "bus-meta";
-          meta.textContent = `${bus.from} → ${bus.to} • ${
+          const metaDiv = document.createElement("div");
+          metaDiv.className = "bus-meta";
+          metaDiv.textContent = `${bus.from || ""} → ${bus.to || ""} • ${
             bus.type || ""
           } • Seats: ${bus.seats || "N/A"}`;
 
           body.appendChild(title);
-          body.appendChild(meta);
+          body.appendChild(metaDiv);
           card.appendChild(img);
           card.appendChild(body);
           busList.appendChild(card);
         });
+
+        // pagination
+        const totalPages = meta.totalPages || 1;
+        const currentPage = meta.currentPage || 1;
+        renderPagination(totalPages, currentPage, meta.mode || "available");
       }
 
-      // MODAL: Confirm booking
+      /* Render pagination controls */
+      function renderPagination(totalPages, currentPage, mode = "available") {
+        const container = document.getElementById("paginationControls");
+        container.innerHTML = "";
+        if (totalPages <= 1) return;
+
+        const createBtn = (label, disabled, cls, onClick) => {
+          const btn = document.createElement("button");
+          btn.className = "page-btn" + (cls ? " " + cls : "");
+          btn.textContent = label;
+          btn.disabled = !!disabled;
+          btn.onclick = onClick;
+          return btn;
+        };
+
+        // Prev
+        container.appendChild(
+          createBtn("Prev", currentPage <= 1, "", () => {
+            const target = currentPage - 1;
+            if (mode === "available") BringAllBuss(target);
+            else searchBuses(target);
+          })
+        );
+
+        // page numbers (show window)
+        const maxButtons = 7;
+        let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        let end = Math.min(totalPages, start + maxButtons - 1);
+        if (end - start < maxButtons - 1)
+          start = Math.max(1, end - maxButtons + 1);
+
+        if (start > 1) {
+          container.appendChild(
+            createBtn("1", false, "", () => {
+              if (mode === "available") BringAllBuss(1);
+              else searchBuses(1);
+            })
+          );
+          if (start > 2)
+            container.appendChild(createBtn("...", true, "page-btn", () => {}));
+        }
+
+        for (let p = start; p <= end; p++) {
+          const isActive = p === currentPage;
+          container.appendChild(
+            createBtn(p, false, isActive ? "active" : "", () => {
+              if (mode === "available") BringAllBuss(p);
+              else searchBuses(p);
+            })
+          );
+        }
+
+        if (end < totalPages) {
+          if (end < totalPages - 1)
+            container.appendChild(createBtn("...", true, "page-btn", () => {}));
+          container.appendChild(
+            createBtn(totalPages, false, "", () => {
+              if (mode === "available") BringAllBuss(totalPages);
+              else searchBuses(totalPages);
+            })
+          );
+        }
+
+        // Next
+        container.appendChild(
+          createBtn("Next", currentPage >= totalPages, "", () => {
+            const target = currentPage + 1;
+            if (mode === "available") BringAllBuss(target);
+            else searchBuses(target);
+          })
+        );
+      }
+
+      /* Booking modal */
       function openBookingModal(bus) {
         selectedBus = bus;
-        const modalBody = document.getElementById("modalBody");
+
+        // Ensure currentSearchData has values even if user came from "View All Available"
+        currentSearchData = currentSearchData || {};
+        if (!currentSearchData.date && bus.date)
+          currentSearchData.date = bus.date;
+        if (!currentSearchData.section && bus.section)
+          currentSearchData.section = bus.section;
+        if (!currentSearchData.from && bus.from)
+          currentSearchData.from = bus.from;
+        if (!currentSearchData.to && bus.to) currentSearchData.to = bus.to;
+        if (!currentSearchData.type && bus.type)
+          currentSearchData.type = bus.type;
+        if (!currentSearchData.name) {
+          currentSearchData.name =
+            document.getElementById("bkName")?.value || "N/A";
+        }
+
         const d = currentSearchData;
-
+        const modalBody = document.getElementById("modalBody");
         modalBody.innerHTML = `
-          <p><b>Bus:</b> ${bus.Busname || bus.name}</p>
-          <p><b>Route:</b> ${bus.from} → ${bus.to}</p>
-          <p><b>Type:</b> ${bus.type || "N/A"}</p>
-          <p><b>Date:</b> ${d.date}</p>
-          <p><b>Section:</b> ${d.section}</p>
-          <p><b>Passenger:</b> ${d.name}</p>
-        `;
-
+    <p><b>Bus:</b> ${bus.Busname || bus.name || "Bus"}</p>
+    <p><b>Route:</b> ${bus.from || ""} → ${bus.to || ""}</p>
+    <p><b>Type:</b> ${bus.type || "N/A"}</p>
+    <p><b>Date:</b> ${d.date || "N/A"}</p>
+    <p><b>Section:</b> ${d.section || "N/A"}</p>
+    <p><b>Passenger:</b> ${d.name || "N/A"}</p>
+  `;
         document.getElementById("bookingModalBackdrop").style.display = "flex";
       }
 
@@ -1118,15 +1271,11 @@
         selectedBus = null;
       }
 
-      // CONFIRM BOOKING -> BACKEND
+      /* Confirm booking */
       async function confirmBooking() {
         if (!selectedBus || !currentSearchData) return;
-
         const d = currentSearchData;
-
         try {
-          console.log(d);
-          console.log(d.bus_no);
           showLoader();
           const res = await fetch(`/guest/booking/${selectedBus._id}`, {
             method: "POST",
@@ -1135,106 +1284,90 @@
               Authorization: `Bearer ${authToken}`,
             },
             body: JSON.stringify({
-              seatNumber: selectedSeat, // ✅ include chosen seat
+              seatNumber: selectedSeat,
               date: d.date,
               section: d.section,
               from: d.from,
               to: d.to,
               type: d.type,
-              Boarding: d.Boarding,
+              Boarding:
+                d.Boarding === "true" || d.Boarding === true ? true : false,
               bus_no: selectedBus.bus_no,
             }),
           });
           const data = await res.json();
           hideLoader();
-
           if (!res.ok) {
             alert(data.message || "Booking failed.");
             return;
           }
-
           alert(data.message || "Booking created with status: pending");
           closeBookingModal();
           loadMyBookings();
         } catch (err) {
           hideLoader();
-          alert(data.message || "Network error while booking. Try again.");
+          alert("Network error while booking. Try again.");
         }
       }
 
-      // LOAD USER BOOKINGS
+      /* Load my bookings */
       async function loadMyBookings() {
         const bookingsEmpty = document.getElementById("bookingsEmpty");
         const bookingsList = document.getElementById("bookingsList");
         bookingsList.innerHTML = "";
         bookingsEmpty.style.display = "none";
-
         try {
           showLoader();
           const res = await fetch("/guest/mybookings", {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
+            headers: { Authorization: `Bearer ${authToken}` },
           });
           const data = await res.json();
-          console.log(data);
           hideLoader();
-
           if (!res.ok) {
             bookingsEmpty.textContent =
               data.message || "Could not load bookings.";
             bookingsEmpty.style.display = "block";
             return;
           }
-
           const bookings = data.Buses || [];
-
           if (!bookings.length) {
             bookingsEmpty.textContent =
               "No bookings yet. Search and book a bus.";
             bookingsEmpty.style.display = "block";
             return;
           }
-
           bookings.forEach((b) => {
             const item = document.createElement("div");
             item.className = "booking-item";
-
             const left = document.createElement("div");
-            left.innerHTML = `
-              <div style="font-size:13px;font-weight:600;">
-                ${b.bus?.Busname || b.busName || "Bus"}
-              </div>
-              <div class="small">
-                ${b.from} → ${b.to} • ${b.date} • ${b.section}
-              </div>
-            `;
-
+            left.innerHTML = `<div style="font-size:13px;font-weight:600;">${
+              b.bus?.Busname || b.busName || "Bus"
+            }</div><div class="small">${b.from} → ${b.to} • ${b.date} • ${
+              b.section
+            }</div>`;
             const right = document.createElement("div");
             right.style.textAlign = "right";
-
+            const isConfirmed =
+              (b.financial_Status || b.status) === "confirmed";
             const badge = document.createElement("span");
             badge.className =
-              "badge " +
-              (b.financial_Status === "confirmed" ? "confirmed" : "pending");
-            badge.textContent = b.status || "pending";
-
+              "badge " + (isConfirmed ? "confirmed" : "pending");
+            badge.textContent =
+              b.status || (isConfirmed ? "confirmed" : "pending");
             right.appendChild(badge);
-
-            if (b.financial_Status === "pending") {
+            if (!isConfirmed) {
               const payBtn = document.createElement("button");
-              payBtn.textContent = "Pay/canc";
+              payBtn.textContent = "Pay/Cancel";
               payBtn.style.marginTop = "6px";
               payBtn.onclick = () => openPayModal(b);
               right.appendChild(payBtn);
             } else {
-              const conBtn = document.createElement("button");
-              payBtn.textContent = "Details";
-              payBtn.style.marginTop = "6px";
-              payBtn.onclick = () => openTripDetailsModal(b);
-              right.appendChild(payBtn);
+              const detailsBtn = document.createElement("button");
+              detailsBtn.textContent = "Details";
+              detailsBtn.style.marginTop = "6px";
+              detailsBtn.onclick = () => openTripDetailsModal(b);
+              right.appendChild(detailsBtn);
             }
-
             item.appendChild(left);
             item.appendChild(right);
             bookingsList.appendChild(item);
@@ -1246,39 +1379,35 @@
         }
       }
 
+      /* Pay modal */
       function openPayModal(booking) {
         bookingToPay = booking;
-        let terminal =
+        const terminal =
           booking.terminal === "N/A" ? "Awaiting" : booking.terminal;
-        let time =
+        const time =
           booking.Time_Boarding === "N/A" ? "Awaiting" : booking.Time_Boarding;
-
         const body = document.getElementById("payModalBody");
         body.innerHTML = `
-    <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
-    <p><b>Terminal:</b> ${terminal}</p>
-    <p><b>Date:</b> ${booking.date}</p>
-    <p><b>Time:</b> ${time}</p>
-    <p><b>Section:</b> ${booking.section}</p>
-    <button id="cancelBtn" class="btn btn-danger">Cancel Trip</button>
-  `;
-
+        <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
+        <p><b>Terminal:</b> ${terminal}</p>
+        <p><b>Date:</b> ${booking.date}</p>
+        <p><b>Time:</b> ${time}</p>
+        <p><b>Section:</b> ${booking.section}</p>
+        <button id="cancelBtn" class="btn-outline">Cancel Trip</button>
+      `;
         document.getElementById("payModalBackdrop").style.display = "flex";
-
-        // attach cancel handler to button
-        document.getElementById("cancelBtn").addEventListener("click", () => {
+        document.getElementById("cancelBtn").onclick = () =>
           canceltrip(booking);
-        });
+      }
+      function closePayModal() {
+        document.getElementById("payModalBackdrop").style.display = "none";
+        bookingToPay = null;
       }
 
       async function canceltrip(booking) {
-        const backdrop = document.getElementById("payModalBackdrop");
         const bookingError = document.getElementById("bookingError");
-        const loader = document.getElementById("loader");
-
         try {
           showLoader();
-
           const res = await fetch(`/guest/cancel_booking/${booking._id}`, {
             method: "DELETE",
             headers: {
@@ -1286,100 +1415,83 @@
               Authorization: `Bearer ${authToken}`,
             },
             body: JSON.stringify({
-              busId: booking.Bus,
+              busId: booking.Bus || booking.bus?._id,
               seatNumber: booking.seatNumber,
             }),
           });
-
           const data = await res.json();
-
+          hideLoader();
           if (!res.ok) {
             bookingError.textContent = data.message || "Failed to cancel trip.";
-            hideLoader();
+            bookingError.style.display = "block";
             return;
           }
-
-          backdrop.style.display = "none";
+          document.getElementById("payModalBackdrop").style.display = "none";
           bookingToPay = null;
-          await loadMyBookings(); // refresh list
+          await loadMyBookings();
         } catch (err) {
-          console.error("Cancel trip failed", err);
+          hideLoader();
           bookingError.textContent = "Something went wrong while cancelling.";
           bookingError.style.display = "block";
-        } finally {
-          loader.style.display = "none";
         }
       }
 
+      /* Trip details */
       function openTripDetailsModal(booking) {
-        // format values
         const terminal =
           booking.terminal === "N/A" ? "Awaiting" : booking.terminal;
         const time =
           booking.Time_Boarding === "N/A" ? "Awaiting" : booking.Time_Boarding;
-        const date = new Date(booking.date).toLocaleDateString();
-
+        const date = booking.date
+          ? new Date(booking.date).toLocaleDateString()
+          : "N/A";
         const body = document.getElementById("tripDetailsBody");
-
         body.innerHTML = `
-    <div class="trip-details-card">
-      <h2 class="trip-title">🚌 Trip Details</h2>
-      <div class="trip-section">
-        <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
-        <p><b>Passenger:</b> ${booking.passenger?.name || "N/A"}</p>
-      </div>
-      <hr/>
-      <div class="trip-section">
-        <p><b>From:</b> ${booking.from}</p>
-        <p><b>To:</b> ${booking.to}</p>
-        <p><b>Date:</b> ${date}</p>
-        <p><b>Section:</b> ${booking.section}</p>
-        <p><b>Terminal:</b> ${terminal}</p>
-        <p><b>Boarding Time:</b> ${time}</p>
-      </div>
-      <hr/>
-      <div class="trip-section">
-        <p><b>Bus No:</b> ${booking.bus_no}</p>
-        <p><b>Seat Number:</b> ${booking.seatNumber}</p>
-        <p><b>Type:</b> ${booking.type}</p>
-      </div>
-      <hr/>
-      <div class="trip-section">
-        <p><b>Financial Status:</b> ${booking.financial_Status}</p>
-        <p><b>Boarding Status:</b> ${
-          booking.Boarding ? "Boarded" : "Not Boarded"
-        }</p>
-      </div>
-    </div>
-  `;
-
+        <div class="trip-details-card">
+          <h2 class="trip-title">🚌 Trip Details</h2>
+          <div class="trip-section">
+            <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
+            <p><b>Passenger:</b> ${booking.passenger?.name || "N/A"}</p>
+          </div>
+          <hr/>
+          <div class="trip-section">
+            <p><b>From:</b> ${booking.from}</p>
+            <p><b>To:</b> ${booking.to}</p>
+            <p><b>Date:</b> ${date}</p>
+            <p><b>Section:</b> ${booking.section}</p>
+            <p><b>Terminal:</b> ${terminal}</p>
+            <p><b>Boarding Time:</b> ${time}</p>
+          </div>
+          <hr/>
+          <div class="trip-section">
+            <p><b>Bus No:</b> ${booking.bus_no}</p>
+            <p><b>Seat Number:</b> ${booking.seatNumber}</p>
+            <p><b>Type:</b> ${booking.type}</p>
+          </div>
+          <hr/>
+          <div class="trip-section">
+            <p><b>Financial Status:</b> ${booking.financial_Status}</p>
+            <p><b>Boarding Status:</b> ${
+              booking.Boarding ? "Boarded" : "Not Boarded"
+            }</p>
+          </div>
+        </div>
+      `;
         document.getElementById("tripDetailsBackdrop").style.display = "flex";
       }
 
-      function closePayModal() {
-        document.getElementById("payModalBackdrop").style.display = "none";
-        bookingToPay = null;
-      }
-
-      // PAY HANDLER (placeholder, ready for Paystack wiring)
+      /* Payment placeholder */
       async function handlePayNow() {
         if (!bookingToPay) return;
-
-        alert("Payment flow (Paystack) will be wired here");
+        alert("Payment flow will be wired here.");
         closePayModal();
-
-        // Later: call backend e.g. /payment/init or similar
-        // then reload bookings: loadMyBookings();
       }
 
-      let selectedSeat = null;
-
-      // Open seat modal and fetch taken seats from backend
+      /* Seat selection */
       async function openSeatModal() {
         if (!selectedBus) return;
         selectedSeat = null;
         document.getElementById("confirmSeatBtn").disabled = true;
-
         try {
           showLoader();
           const res = await fetch(`/guest/bookedseats/${selectedBus._id}`, {
@@ -1387,40 +1499,33 @@
           });
           const data = await res.json();
           hideLoader();
-
           const takenSeats = data.bookedSeats || [];
           const totalSeats = selectedBus.seats || 0;
-
           renderSeatGrid(totalSeats, takenSeats);
           document.getElementById("seatModalBackdrop").style.display = "flex";
         } catch (err) {
           hideLoader();
-          alert(data.message);
+          alert("Failed to load seat map. Try again.");
         }
       }
 
-      // Render seat grid with colours
       function renderSeatGrid(totalSeats, takenSeats) {
         const grid = document.getElementById("seatGrid");
         grid.innerHTML = "";
-
         for (let i = 1; i <= totalSeats; i++) {
           const seatDiv = document.createElement("div");
           seatDiv.className = "seat";
           seatDiv.textContent = i;
-
-          if (takenSeats.includes(i)) {
+          if (Array.isArray(takenSeats) && takenSeats.includes(i)) {
             seatDiv.classList.add("taken");
           } else {
             seatDiv.classList.add("available");
             seatDiv.onclick = () => selectSeat(i, seatDiv);
           }
-
           grid.appendChild(seatDiv);
         }
       }
 
-      // Select seat
       function selectSeat(seatNumber, seatDiv) {
         document
           .querySelectorAll(".seat.selected")
@@ -1430,14 +1535,12 @@
         document.getElementById("confirmSeatBtn").disabled = false;
       }
 
-      // Save seat selection and close modal
       function saveSeatSelection() {
         if (!selectedSeat) return;
         alert(`Seat ${selectedSeat} selected`);
         closeSeatModal();
       }
 
-      // Close seat modal
       function closeSeatModal() {
         document.getElementById("seatModalBackdrop").style.display = "none";
       }

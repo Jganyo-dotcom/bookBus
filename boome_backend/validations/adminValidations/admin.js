@@ -37,10 +37,16 @@ const validateaddingBus = Joi.object({
 
 //patch for Buses to Board
 const validateBoardingBus = Joi.object({
-  Boarding: Joi.boolean().required(),
-  terminal: Joi.string().required(),
-  section: Joi.string().required(),
-  Time_Boarding: Joi.string().required(),
+  Boarding: Joi.boolean().optional(),
+  terminal: Joi.string().optional().min(6),
+  section: Joi.string().optional().min(5),
+  Time_Boarding: Joi.string().optional().min(2),
+  section: Joi.string().optional().min(6),
+  to: Joi.string().optional().min(2),
+  from: Joi.string().optional().min(2),
+  seats: Joi.number().optional(),
+  type: Joi.string().min(6).optional(),
+  date: Joi.date().optional(),
 });
 
 module.exports = {

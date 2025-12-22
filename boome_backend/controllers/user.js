@@ -144,6 +144,90 @@ const availableBuses = async (req, res) => {
   }
 };
 
+/**
+ * GET /guest/availableBuses
+ * Query params:
+ *  - page (default 1)
+ *  - limit (default 9)
+ *  - from, to, type, section, seats (optional filters)
+ *
+ * Response:
+ *  { Buses: [...], totalPages, currentPage }
+ */
+const allAvalableBuses = async (req, res) => {
+  try {
+    // Parse pagination params with defaults
+    const page = Math.max(1, parseInt(req.query.page || "1", 10));
+    const limit = Math.max(1, parseInt(req.query.limit || "9", 10));
+    const skip = (page - 1) * limit;
+
+    // Build filter object from query params
+    const { from, to, type, section, seats, date } = req.query;
+    const filter = {};
+
+    if (from) filter.from = from;
+    if (to) filter.to = to;
+    if (type) filter.type = type;
+    if (date) filter.date = date;
+    if (section) filter.section = section;
+    if (seats) {
+      // If seats is provided, match buses with at least that many seats
+      // (adjust logic if you want exact match instead)
+      const seatsNum = parseInt(seats, 10);
+      if (!Number.isNaN(seatsNum)) filter.seats = { $gte: seatsNum };
+    }
+
+    // Count total matching documents
+    const totalCount = await BusSchema.countDocuments(filter).exec();
+
+    if (totalCount === 0) {
+      return res.status(404).json({
+        message: "No Buses available",
+        Buses: [],
+        totalPages: 0,
+        currentPage: page,
+      });
+    }
+
+    // Fetch paginated buses
+    const buses = await BusSchema.find(filter)
+      .sort({ createdAt: -1 }) // optional: newest first
+      .skip(skip)
+      .limit(limit)
+      .lean()
+      .exec();
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    // Optional logging for auditing
+    if (req.user) {
+      console.log(
+        `${req.user.name} <${req.user.email}> requested available buses (page ${page}, limit ${limit})`
+      );
+    } else {
+      console.log(
+        `Anonymous request for available buses (page ${page}, limit ${limit})`
+      );
+    }
+
+    return res.status(200).json({
+      message: "Success",
+      Buses: buses,
+      totalPages,
+      currentPage: page,
+    });
+  } catch (error) {
+    console.error("allAvalableBuses error:", error);
+    return res
+      .status(500)
+      .json({ message: "Something went wrong while getting available buses" });
+  }
+};
+
+module.exports = {
+  allAvalableBuses,
+};
+
 const MyBookings = async (req, res) => {
   try {
     const Buses = await bookedbusesSchema.find({
@@ -236,5 +320,6 @@ module.exports = {
   AlreadyBookedseats,
   CancelBooking,
   availableBuses,
+  allAvalableBuses,
   MyBookings,
 };

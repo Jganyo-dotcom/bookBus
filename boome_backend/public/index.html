@@ -418,6 +418,7 @@
               <th>Seats</th>
               <th>Action</th>
               <th>Delete</th>
+              <th>update</th>
             </tr>
           </thead>
           <tbody id="busTable"></tbody>
@@ -544,7 +545,7 @@
               <select id="type" class="select">
                 <option value="">Type (select)</option>
                 <option>luxury</option>
-                <option>standard</option>
+                <option>economy</option>
               </select>
             </div>
           </div>
@@ -585,21 +586,23 @@
         <p id="boardingStatus" style="margin: 10px 0"></p>
         <label style="font-weight: 600">Terminal</label>
         <select id="terminal" class="select">
-          <option>terminal 1</option>
-          <option>terminal 2</option>
-          <option>terminal 3</option>
-          <option>terminal 4</option>
-          <option>terminal 5</option>
-          <option>terminal 6</option>
-          <option>terminal 7</option>
+          <option value="">Select Terminal</option>
+          <option value="Terminal 1">Terminal 1</option>
+          <option value="Terminal 2">Terminal 2</option>
+          <option value="Terminal 3">Terminal 3</option>
+          <option value="Terminal 4">Terminal 4</option>
+          <option value="Terminal 5">Terminal 5</option>
+          <option value="Terminal 6">Terminal 6</option>
+          <option value="Terminal 7">Terminal 7</option>
+          <option value="Terminal 8">Terminal 8</option>
+          <option value="Terminal 9">Terminal 9</option>
+          <option value="Terminal 10">Terminal 10</option>
+          <option value="Terminal 11">Terminal 11</option>
+          <option value="Terminal 12">Terminal 12</option>
         </select>
+
         <label style="font-weight: 600; margin-top: 8px">Section</label>
-        <select id="sectionModal" class="select">
-          <option>morning</option>
-          <option>afternoon</option>
-          <option>evening</option>
-          <option>night</option>
-        </select>
+
         <label style="font-weight: 600; margin-top: 8px">Time boarding</label>
         <input id="timeBoarding" class="input" placeholder="e.g. 3pm" />
         <div style="display: flex; gap: 10px; margin-top: 14px">
@@ -609,6 +612,54 @@
       </div>
     </div>
 
+    <!----------actual update Modal-->
+
+    <div id="modaldel" class="modal">
+      <div class="modal-content">
+        <select id="sect" class="select">
+          <option value="">Section (select)</option>
+          <option value="morning">Morning</option>
+          <option value="evening">Evening</option>
+        </select>
+
+        <select id="fro" class="select">
+          <option value="">From (select)</option>
+          <option value="Accra">Accra</option>
+          <option value="Kumasi">Kumasi</option>
+        </select>
+
+        <select id="To" class="select">
+          <option value="">To (select)</option>
+          <option value="Accra">Accra</option>
+          <option value="Kumasi">Kumasi</option>
+        </select>
+
+        <select id="bseats" class="select">
+          <option value="">Seat number (select)</option>
+          <option value="15">15</option>
+          <option value="55">55</option>
+        </select>
+
+        <select id="Type" class="select">
+          <option value="">Type (select)</option>
+          <option value="luxury">luxury</option>
+          <option value="economy">economy</option>
+        </select>
+
+        <input id="numb" class="input" placeholder="6777-22" />
+        <input id="namebus" class="input" placeholder="e.g. vip" />
+        <input id="Date" class="input" type="date" placeholder="e.g. vip" />
+
+        <div style="display: flex; gap: 10px; margin-top: 14px">
+          <button class="btn" onclick="submitnewUpdate()">Update</button>
+          <button class="btn btn-danger" onclick="closeModaldel()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!----------actual update-->
     <!-- Delete Bus Modal -->
     <div id="modall" class="modal">
       <div class="modal-content">
@@ -619,6 +670,22 @@
           </button>
           <button class="btn" onclick="closeModall()">Cancel</button>
         </div>
+      </div>
+    </div>
+
+    <div id="busImageModal" class="modal">
+      <div class="modal-content">
+        <img
+          id="busImage"
+          src=""
+          alt="Bus Image"
+          style="max-width: 100%; height: auto"
+        />
+        <button
+          onclick="document.getElementById('busImageModal').style.display='none'"
+        >
+          Close
+        </button>
       </div>
     </div>
 
@@ -735,6 +802,7 @@
           if (data.message) console.log(data.message);
           renderBuses(busesArray);
         } catch (err) {
+          console.log(err);
           alert("Failed to fetch buses");
         } finally {
           hideLoader();
@@ -765,33 +833,72 @@
       function renderBuses(buses) {
         const busTable = document.getElementById("busTable");
         busTable.innerHTML = "";
+
         buses.forEach((b) => {
-          busTable.innerHTML += `
-          <tr>
-            <td>${b.Busname ?? ""}</td>
-            <td>${b.bus_no ?? ""}</td>
-            <td>${b.from ?? ""} → ${b.to ?? ""}</td>
-            <td>${b.Driver?.name ?? ""}</td>
-            <td>${b.Boarding ?? ""}</td>
-            <td>${b.Time_Boarding ?? ""}</td>
-            <td>${b.date ?? ""}</td>
-            <td>${b.terminal ?? ""}</td>
-            <td>${b.type ?? ""}</td>
-            <td>${b.section ?? ""}</td>
-            <td>${b.seats ?? ""}</td>
-            <td>
-              <button class="btn-inline" onclick="openModal('${
-                b._id
-              }', ${!!b.Boarding})">Update to board</button>
-            </td>
-            <td>
-              <button class="btn-inline btn-danger" onclick="openModalondelete('${
-                b._id
-              }','${b.Driver?._id ?? ""}')">Delete</button>
-            </td>
-          </tr>
-        `;
+          const formattedDate = b.date
+            ? new Date(b.date).toISOString().split("T")[0]
+            : "";
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+      <td>${b.Busname ?? ""}</td>
+      <td>${b.bus_no ?? ""}</td>
+      <td>${b.from ?? ""} → ${b.to ?? ""}</td>
+      <td>${b.Driver?.name ?? ""}</td>
+      <td>${b.Boarding ?? ""}</td>
+      <td>${b.Time_Boarding ?? ""}</td>
+      <td>${formattedDate}</td>
+      <td>${b.terminal ?? ""}</td>
+      <td>${b.type ?? ""}</td>
+      <td>${b.section ?? ""}</td>
+      <td>${b.seats ?? ""}</td>
+      <td>
+        <button class="btn-inline update-btn">Update to board</button>
+      </td>
+      <td>
+        <button class="btn-inline btn-danger delete-btn">Delete</button>
+      </td>
+      <td>
+        <button class="btn-inline btn-danger new-btn">New</button>
+      </td>
+    `;
+
+          // Attach bus image URL to row
+          row.dataset.image = b.imageUrl;
+
+          // Row click → show bus image
+          row.addEventListener("click", () => {
+            if (row.dataset.image) {
+              showBusImage(row.dataset.image);
+            }
+          });
+
+          // Button listeners (stopPropagation prevents row click)
+          row.querySelector(".update-btn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            openModal(b._id, !!b.Boarding);
+          });
+
+          row.querySelector(".delete-btn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            openModalondelete(b._id, b.Driver?._id ?? "");
+          });
+
+          row.querySelector(".new-btn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            opennewModal(b._id);
+          });
+
+          busTable.appendChild(row);
         });
+      }
+
+      // Function to show bus image in a modal
+      function showBusImage(imageUrl) {
+        const modal = document.getElementById("busImageModal");
+        const img = document.getElementById("busImage");
+        img.src = imageUrl;
+        modal.style.display = "block";
       }
 
       function renderDrivers(drivers) {
@@ -847,8 +954,17 @@
         selecteddriveId = driverId;
         document.getElementById("modall").style.display = "flex";
       }
+
+      function opennewModal(busId, driverId) {
+        selectedBusId = busId;
+        selecteddriveId = driverId;
+        document.getElementById("modaldel").style.display = "flex";
+      }
       function closeModall() {
         document.getElementById("modall").style.display = "none";
+      }
+      function closeModaldel() {
+        document.getElementById("modaldel").style.display = "none";
       }
 
       function openModalondeletedriver(id) {
@@ -873,9 +989,14 @@
           const payload = {
             Boarding: boardingValue,
             terminal: document.getElementById("terminal").value,
-            section: document.getElementById("sectionModal").value,
             Time_Boarding: document.getElementById("timeBoarding").value,
           };
+          // Remove empty/default values
+          Object.keys(payload).forEach((key) => {
+            if (!payload[key]) {
+              delete payload[key];
+            }
+          });
           const res = await fetch(`/bus/boarding/${selectedBusId}`, {
             method: "PATCH",
             headers: {
@@ -893,10 +1014,62 @@
           closeModal();
           fetchAllBuses();
         } catch (err) {
+          console.log(err);
           alert("Update failed");
         } finally {
           hideLoader();
         }
+      }
+
+      //actual update
+
+      async function submitnewUpdate() {
+        showLoader();
+        try {
+          let payload = {
+            section: document.getElementById("sect").value,
+            from: document.getElementById("fro").value,
+            to: document.getElementById("To").value,
+            type: document.getElementById("Type").value,
+            bus_no: document.getElementById("numb").value,
+            name: document.getElementById("namebus").value,
+            seats: document.getElementById("bseats").value,
+            date: document.getElementById("Date").value,
+          };
+
+          // Remove empty/default values
+          Object.keys(payload).forEach((key) => {
+            if (!payload[key]) {
+              delete payload[key];
+            }
+          });
+
+          const res = await fetch(`/bus/boarding/${selectedBusId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.message);
+            return;
+          }
+          alert(data.message);
+          closeModaldel();
+          fetchAllBuses();
+        } catch (err) {
+          alert("Update failed");
+        } finally {
+          hideLoader();
+        }
+      }
+
+      function closeModaldel() {
+        document.getElementById("modaldel").style.display = "none";
       }
 
       // Delete bus

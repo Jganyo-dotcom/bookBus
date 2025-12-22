@@ -5,6 +5,7 @@ const {
   allbuses,
   Bus_Boarding,
   queryBus,
+  updateBus,
 } = require("../../controllers/adminsController/bus");
 const {
   Checkrole,
@@ -23,6 +24,7 @@ router.get("/Staff/buses", authmiddleware, checkrole, allbuses);
 router.get("/bus-number", authmiddleware, CheckroleonAll, queryBus); // route to query a bus by number
 router.get("/takenSeats/:busId", authmiddleware, AlreadyBookedseats);
 router.delete("/delete/:id/:di", authmiddleware, Checkrole, deleteBus);
+router.patch("/update/:id", authmiddleware, Checkrole, updateBus); //update bus
 router.patch("/boarding/:id", authmiddleware, Checkrole, Bus_Boarding); //set a bus as a boarding
 
 module.exports = router;
