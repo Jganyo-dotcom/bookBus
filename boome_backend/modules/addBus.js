@@ -14,7 +14,7 @@ const BusSchema = new mongoose.Schema(
     terminal: { type: String, default: "N/A", required: true },
     section: { type: String, required: true },
     Time_Boarding: { type: String, required: true },
-
+    price: { type: String,default: "N/A", required: true },
     Driver: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Drivers",

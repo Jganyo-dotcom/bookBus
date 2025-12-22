@@ -14,6 +14,7 @@ const BookedBusSchema = new mongoose.Schema(
     section: { type: String, required: true },
     Time_Boarding: { type: String, default: "N/A" },
     financial_Status: { type: String, required: true, default: "pending" },
+    price: { type: String, default: "N/A", required: true },
     passenger: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
