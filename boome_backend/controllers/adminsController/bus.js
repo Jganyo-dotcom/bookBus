@@ -1,13 +1,13 @@
 const { request } = require("express");
-const BusSchema = require("../../modules/addBus");
+const BusSchema = require("../../models/addBus");
 const {
   validateaddingBus,
   validateBoardingBus,
 } = require("../../validations/adminValidations/admin");
-const driverModule = require("../../modules/driver.module");
+const driverModule = require("../../models/driver.module");
 
 const { cloudinary } = require("../../middlewares/cloud");
-const booked_buses = require("../../modules/booked_buses");
+const booked_buses = require("../../models/booked_buses");
 
 const add_Bus = async (req, res) => {
   const { error, value } = validateaddingBus.validate(req.body);
@@ -140,11 +140,19 @@ const updateBus = async (req, res) => {
   if (error) return res.status(400).json({ message: error.details[0].message });
   try {
     const existing_bus = await booked_buses.find({ Bus: Bus_id });
+    const existing_Bus = await BusSchema.find({ Bus: Bus_id });
     // find bus no is existing
     if (!existing_bus) {
       return res.status(404).json({ mesage: "bus not found" });
     }
+    if (!existing_Bus) {
+      return res.status(404).json({ mesage: "bus not found" });
+    }
     const Board = await booked_buses.findOneAndUpdate(value, {
+      new: true,
+      runValidators: true,
+    });
+    const board = await BusSchema.findOneAndUpdate(value, {
       new: true,
       runValidators: true,
     });
@@ -173,4 +181,11 @@ const queryBus = async (req, res) => {
   }
 };
 
-module.exports = { add_Bus, deleteBus, allbuses, Bus_Boarding, queryBus ,updateBus};
+module.exports = {
+  add_Bus,
+  deleteBus,
+  allbuses,
+  Bus_Boarding,
+  queryBus,
+  updateBus,
+};

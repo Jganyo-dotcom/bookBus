@@ -8,6 +8,7 @@ const {
   availableBuses,
   MyBookings,
   allAvalableBuses,
+  payment,
 } = require("../controllers/user");
 const authmiddleware = require("../middlewares/auth");
 const router = express.Router();
@@ -16,6 +17,7 @@ router.post("/register", registerNewUser);
 router.post("/login", LoginUser);
 router.post("/booking", authmiddleware, availableBuses);
 router.get("/availableBuses", authmiddleware, allAvalableBuses);
+router.post("/pay/:id", authmiddleware, payment);
 router.get("/bookedseats/:busId", authmiddleware, AlreadyBookedseats);
 router.post("/booking/:id", authmiddleware, BookBus);
 router.get("/mybookings", authmiddleware, MyBookings);

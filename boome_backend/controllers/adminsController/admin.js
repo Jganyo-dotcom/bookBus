@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const UserSchema = require("../../modules/users.module");
+const UserSchema = require("../../models/users.module");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {
@@ -7,9 +7,9 @@ const {
   validationAdminLogin,
   validationDriverSchema,
 } = require("../../validations/adminValidations/admin");
-const DriversSchema = require("../../modules/driver.module");
-const BusModel = require("../../modules/addBus");
-const driverModule = require("../../modules/driver.module");
+const DriversSchema = require("../../models/driver.module");
+const BusModel = require("../../models/addBus");
+const driverModule = require("../../models/driver.module");
 
 const LoginAdmin = async (req, res) => {
   const { error, value } = validationAdminLogin.validate(req.body);
@@ -20,6 +20,9 @@ const LoginAdmin = async (req, res) => {
   const tryingToLoginAdmin = await UserSchema.findOne({ email: value.email });
   if (!tryingToLoginAdmin) {
     return res.status(404).json({ message: "user not found" });
+  }
+  if (tryingToLoginAdmin.role !== "Admin") {
+    return res.status(400).json({ message: "Not allowed" });
   }
   const tryingToLoginAdmins = await UserSchema.find({ email: value.email });
   //compare password

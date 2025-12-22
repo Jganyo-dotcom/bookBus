@@ -3,16 +3,18 @@ const {
   validationForLogin,
   validationForBookingSchema,
   validateBookingBus,
+  validatepayment,
 } = require("../validations/user");
 const Joi = require("joi");
-const UserSchema = require("../modules/users.module");
+const UserSchema = require("../models/users.module");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {
   validateBoardingBus,
 } = require("../validations/adminValidations/admin");
-const bookedbusesSchema = require("../modules/booked_buses");
-const BusSchema = require("../modules/addBus");
+const bookedbusesSchema = require("../models/booked_buses");
+const BusSchema = require("../models/addBus");
+const PastbookedBuses = require("../models/pastpassengers");
 
 const registerNewUser = async (req, res) => {
   const { error, value } = validationForRegisterSchema.validate(req.body);
@@ -130,6 +132,7 @@ const availableBuses = async (req, res) => {
       seats: parseInt(value.seats),
       section: value.section,
       Boarding: Boarding,
+      price: value.price,
     });
     if (!Buses || Buses.length === 0)
       return res.status(404).json({ message: "No Buses available" });
@@ -248,25 +251,21 @@ const MyBookings = async (req, res) => {
 
 const BookBus = async (req, res) => {
   const busId = req.params.id;
-  console.log(busId);
   const { error, value } = validationForBookingSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
-  console.log(value.section);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+
   const taken = await bookedbusesSchema.findOne({
     Bus: busId,
     seatNumber: value.seatNumber,
   });
-  if (taken) {
-    return res.status(400).json({ message: "Already booked" });
-  }
-  const validateseat = await BusSchema.findById({ _id: busId });
-  console.log(validateseat.seats);
+  if (taken) return res.status(400).json({ message: "Already booked" });
+
+  const validateseat = await BusSchema.findById(busId);
   if (value.seatNumber > validateseat.seats)
-    return res.status(400).json({ error: "exceeded maxi seat" });
+    return res.status(400).json({ error: "exceeded max seat" });
+
   try {
-    const BookBus = bookedbusesSchema({
+    const booking = new bookedbusesSchema({
       Bus: busId,
       seatNumber: value.seatNumber,
       from: value.from,
@@ -274,22 +273,23 @@ const BookBus = async (req, res) => {
       type: value.type,
       Boarding: value.Boarding,
       date: value.date,
-      seatNumber: value.seatNumber,
-      financial_status: value.financial_status,
+      financial_status: "pending",
       passenger: req.user.id,
       bus_no: value.bus_no,
       section: value.section,
+      price: value.price,
     });
-    await BookBus.save();
+    await booking.save();
+
     res.status(201).json({
-      message: "booking is awaiting payment to complete transaction",
-      BookBus,
+      message: "Booking is awaiting payment to complete transaction",
+      booking,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      message: "something went wrong while booking your bus",
-    });
+    res
+      .status(500)
+      .json({ message: "Something went wrong while booking your bus" });
   }
 };
 
@@ -313,6 +313,54 @@ const CancelBooking = async (req, res) => {
   }
 };
 
+const payment = async (req, res) => {
+  try {
+    console.log("Payment attempt");
+    const bookingId = req.params.id;
+
+    // validate body
+    const { error, value } = validatepayment.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    // find booking
+    const bus = await bookedbusesSchema.findById(bookingId);
+    if (!bus) return res.status(404).json({ message: "Booking not found" });
+
+    // check price and passenger
+    console.log(bus.price);
+    console.log(value.price);
+    if (
+      String(bus.price).trim() === String(value.price).trim() &&
+      bus.passenger.toString() === req.user.id
+    ) {
+      await bookedbusesSchema.findByIdAndUpdate(
+        bookingId,
+        { financial_Status: "confirmed" },
+        { new: true }
+      );
+
+      await PastbookedBuses.findOneAndUpdate(
+        { bus_no: bus.bus_no, passenger: req.user.id },
+        { financial_Status: "confirmed" },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        message: `Payment of ${value.price} confirmed for Elikem Transport`,
+      });
+    } else {
+      return res.status(400).json({ message: "Invalid payment details" });
+    }
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Server error while processing payment" });
+  }
+};
+
 module.exports = {
   registerNewUser,
   LoginUser,
@@ -322,4 +370,5 @@ module.exports = {
   availableBuses,
   allAvalableBuses,
   MyBookings,
+  payment,
 };

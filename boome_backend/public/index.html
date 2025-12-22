@@ -330,6 +330,24 @@
           font-size: 13px;
         }
       }
+      .table-scroll {
+        width: 100%;
+        overflow-x: auto; /* enable horizontal scroll */
+        -webkit-overflow-scrolling: touch; /* smooth scrolling on touch devices */
+      }
+
+      .table-scroll table {
+        min-width: 1000px; /* force table wider than container if needed */
+        border-collapse: collapse;
+      }
+
+      .table-scroll th,
+      .table-scroll td {
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        text-align: left;
+        white-space: nowrap; /* prevent text wrapping so columns stay compact */
+      }
     </style>
   </head>
   <body>
@@ -401,28 +419,31 @@
           />
           <button class="btn-inline" onclick="searchByDriver()">Search</button>
         </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Bus</th>
-              <th>Number</th>
-              <th>Route</th>
-              <th>Driver</th>
-              <th>Boarding</th>
-              <th>Time</th>
-              <th>Date</th>
-              <th>Terminal</th>
-              <th>Type</th>
-              <th>Section</th>
-              <th>Seats</th>
-              <th>Action</th>
-              <th>Delete</th>
-              <th>update</th>
-            </tr>
-          </thead>
-          <tbody id="busTable"></tbody>
-        </table>
+        <!-- Wrap your table in a scroll container -->
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Bus</th>
+                <th>Number</th>
+                <th>Route</th>
+                <th>Driver</th>
+                <th>Boarding</th>
+                <th>Time</th>
+                <th>Date</th>
+                <th>Terminal</th>
+                <th>Type</th>
+                <th>Section</th>
+                <th>Seats</th>
+                <th>Price</th>
+                <th>Action</th>
+                <th>Delete</th>
+                <th>Update</th>
+              </tr>
+            </thead>
+            <tbody id="busTable"></tbody>
+          </table>
+        </div>
       </section>
 
       <!-- Drivers -->
@@ -649,6 +670,7 @@
         <input id="numb" class="input" placeholder="6777-22" />
         <input id="namebus" class="input" placeholder="e.g. vip" />
         <input id="Date" class="input" type="date" placeholder="e.g. vip" />
+        <input id="price" class="input" placeholder="GHC 112" />
 
         <div style="display: flex; gap: 10px; margin-top: 14px">
           <button class="btn" onclick="submitnewUpdate()">Update</button>
@@ -852,6 +874,7 @@
       <td>${b.type ?? ""}</td>
       <td>${b.section ?? ""}</td>
       <td>${b.seats ?? ""}</td>
+      <td>${b.price ?? ""}</td>
       <td>
         <button class="btn-inline update-btn">Update to board</button>
       </td>
@@ -859,7 +882,7 @@
         <button class="btn-inline btn-danger delete-btn">Delete</button>
       </td>
       <td>
-        <button class="btn-inline btn-danger new-btn">New</button>
+        <button class="btn-inline btn-danger new-btn">EDIT</button>
       </td>
     `;
 
@@ -1035,6 +1058,7 @@
             name: document.getElementById("namebus").value,
             seats: document.getElementById("bseats").value,
             date: document.getElementById("Date").value,
+            price: document.getElementById("price").value,
           };
 
           // Remove empty/default values

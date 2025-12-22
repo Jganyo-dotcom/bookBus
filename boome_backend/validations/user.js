@@ -21,6 +21,7 @@ const validationForBookingSchema = Joi.object({
   date: Joi.date().optional(),
   section: Joi.string().required(),
   bus_no: Joi.string().required(),
+  price: Joi.string().required(),
 });
 
 const validateBookingBus = Joi.object({
@@ -33,9 +34,15 @@ const validateBookingBus = Joi.object({
   section: Joi.string().required(),
 });
 
+const validatepayment = Joi.object({
+  price: Joi.string().required(),
+  pin: Joi.number().required(),
+});
+
 module.exports = {
   validationForRegisterSchema,
   validationForLogin,
   validationForBookingSchema,
   validateBookingBus,
+  validatepayment,
 };

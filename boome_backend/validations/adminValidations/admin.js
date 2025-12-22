@@ -33,6 +33,7 @@ const validateaddingBus = Joi.object({
   date: Joi.date().required(),
   section: Joi.string().required(),
   Time_Boarding: Joi.string().default("N/A").optional(),
+  price: Joi.string().default("N/A").optional(),
 });
 
 //patch for Buses to Board
@@ -47,6 +48,7 @@ const validateBoardingBus = Joi.object({
   seats: Joi.number().optional(),
   type: Joi.string().min(6).optional(),
   date: Joi.date().optional(),
+  price: Joi.string().default("N/A").optional(),
 });
 
 module.exports = {

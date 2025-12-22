@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const Users = require("../modules/users.module");
+const Users = require("../models/users.module");
 
 const registerAdminfunction = async () => {
   try {

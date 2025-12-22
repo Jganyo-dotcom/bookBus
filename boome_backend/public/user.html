@@ -17,9 +17,11 @@
         --danger: #dc3545;
         --success: #198754;
       }
+
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
         padding: 20px;
@@ -31,6 +33,7 @@
         align-items: center;
         min-height: 100vh;
       }
+
       .container {
         max-width: 980px;
         width: 100%;
@@ -40,6 +43,7 @@
         text-align: center;
         margin: 0 0 20px;
       }
+
       .card {
         background: var(--card);
         border-radius: 18px;
@@ -48,6 +52,7 @@
         padding: 20px;
         margin-bottom: 20px;
       }
+
       .card-header {
         display: flex;
         justify-content: space-between;
@@ -58,6 +63,7 @@
         font-size: 20px;
         margin: 0;
       }
+
       .tabs {
         display: flex;
         gap: 10px;
@@ -77,6 +83,7 @@
         color: #fff;
         border-color: var(--primary-dark);
       }
+
       input,
       select,
       button {
@@ -96,6 +103,7 @@
       select:focus {
         border-color: var(--primary);
       }
+
       button {
         padding: 11px 16px;
         border-radius: 10px;
@@ -110,6 +118,7 @@
         background: var(--primary-dark);
         transform: translateY(-1px);
       }
+
       .btn-outline {
         background: #fff;
         color: var(--primary);
@@ -320,10 +329,58 @@
         font-weight: 600;
       }
 
-      /* Floating messages */
+      /* News ticker */
+      #newsTickerWrapper {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 1200;
+      }
+      #newsTicker {
+        pointer-events: auto;
+        width: min(100%, 980px);
+        max-width: 980px;
+        background: blue;
+        color: #fff;
+        border-radius: 999px;
+        padding: 8px 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      #newsTickerInner {
+        display: inline-block;
+        white-space: nowrap;
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        transform: translateX(0);
+        animation: tickerMove 18s linear infinite alternate;
+      }
+      #newsTicker:hover #newsTickerInner {
+        animation-play-state: paused;
+        cursor: pointer;
+      }
+      @keyframes tickerMove {
+        0% {
+          transform: translateX(-10%);
+        }
+        50% {
+          transform: translateX(10%);
+        }
+        100% {
+          transform: translateX(-10%);
+        }
+      }
+
+      /* Messages widget above ticker */
       .messages-widget {
         position: fixed;
-        bottom: 20px;
+        bottom: 64px;
         right: 20px;
         background: var(--primary);
         color: #fff;
@@ -335,7 +392,8 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        z-index: 1000;
+        transition: 0.2s ease;
+        z-index: 1300;
       }
       .messages-widget:hover {
         background: var(--primary-dark);
@@ -348,6 +406,22 @@
         padding: 2px 8px;
         font-size: 12px;
         font-weight: 600;
+      }
+
+      /* PIN inputs (payment) */
+      .pin-inputs {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0;
+        justify-content: center;
+      }
+      .pin-inputs input {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        font-size: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
       }
 
       /* Responsive */
@@ -373,85 +447,6 @@
           grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
           gap: 6px;
         }
-      }
-      /* News ticker wrapper (fixed at bottom, above messages widget) */
-      /* Place ticker at the very bottom of the viewport */
-      #newsTickerWrapper {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0; /* moved to the very bottom */
-        display: flex;
-        justify-content: center;
-        pointer-events: none;
-        z-index: 1200;
-      }
-
-      /* Ticker container */
-      #newsTicker {
-        pointer-events: auto;
-        width: min(100%, 980px);
-        max-width: 980px;
-        background: blue;
-        color: #fff;
-        border-radius: 999px;
-        padding: 8px 14px;
-        overflow: hidden;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-      }
-
-      /* Inner moving element */
-      #newsTickerInner {
-        display: inline-block;
-        white-space: nowrap;
-        font-weight: 600;
-        font-size: 14px;
-        letter-spacing: 0.2px;
-        transform: translateX(0);
-        animation: tickerMove 18s linear infinite alternate;
-      }
-
-      /* Pause animation on hover */
-      #newsTicker:hover #newsTickerInner {
-        animation-play-state: paused;
-        cursor: pointer;
-      }
-
-      /* Keyframes: gentle back-and-forth */
-      @keyframes tickerMove {
-        0% {
-          transform: translateX(-10%);
-        }
-        50% {
-          transform: translateX(10%);
-        }
-        100% {
-          transform: translateX(-10%);
-        }
-      }
-
-      /* Ensure the floating messages widget sits above the ticker */
-      .messages-widget {
-        position: fixed;
-        bottom: 64px; /* moved up so it doesn't overlap the ticker */
-        right: 20px;
-        background: var(--primary);
-        color: #fff;
-        padding: 12px 16px;
-        border-radius: 50px;
-        box-shadow: var(--shadow);
-        cursor: pointer;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: 0.2s ease;
-        z-index: 1300; /* higher than ticker */
-      }
-
-      /* Mobile adjustments */
-      @media (max-width: 480px) {
         #newsTickerInner {
           animation-duration: 26s;
           font-size: 13px;
@@ -461,7 +456,7 @@
         }
         .messages-widget {
           bottom: 84px;
-        } /* give extra space on small screens */
+        }
       }
     </style>
   </head>
@@ -483,12 +478,10 @@
       <!-- AUTH CARD -->
       <div class="card" id="authCard">
         <div class="card-header"><h2>Account</h2></div>
-
         <div class="tabs">
           <button class="tab-btn active" id="loginTab">Login</button>
           <button class="tab-btn" id="registerTab">Register</button>
         </div>
-
         <div id="authError" class="error-text" style="display: none"></div>
         <div id="authSuccess" class="success-text" style="display: none"></div>
 
@@ -532,12 +525,10 @@
           <h2>Book a Bus</h2>
           <button class="btn-outline" onclick="handleLogout()">Logout</button>
         </div>
-
         <p class="small" style="margin-bottom: 10px">
           Fill the form to search for available buses.
         </p>
 
-        <!-- Hidden passenger name -->
         <input id="bkName" type="hidden" />
 
         <div
@@ -552,7 +543,6 @@
             <option value="Accra">Accra</option>
             <option value="Kumasi">Kumasi</option>
           </select>
-
           <select id="bkTo">
             <option value="">To</option>
             <option value="Accra">Accra</option>
@@ -572,16 +562,14 @@
         >
           <select id="bkType">
             <option value="">Any type</option>
-            <option value="luxury">luxury</option>
+            <option value="luxury">Luxury</option>
             <option value="economy">Economy</option>
           </select>
-
           <select id="bkSection">
             <option value="">Section</option>
             <option value="morning">Morning</option>
             <option value="evening">Evening</option>
           </select>
-
           <select id="bkseats">
             <option value="">Seats</option>
             <option value="55">55</option>
@@ -590,7 +578,6 @@
         </div>
 
         <input type="hidden" id="bkBoard" value="false" />
-
         <div id="bookingError" class="error-text" style="display: none"></div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
@@ -682,10 +669,19 @@
           <h3>Pay for Booking</h3>
           <button class="btn-outline" onclick="closePayModal()">X</button>
         </div>
+
         <div id="payModalBody" class="small"></div>
+
+        <div class="pin-inputs">
+          <input type="password" maxlength="1" />
+          <input type="password" maxlength="1" />
+          <input type="password" maxlength="1" />
+          <input type="password" maxlength="1" />
+        </div>
+
         <div class="modal-footer">
-          <button class="btn-outline" onclick="closePayModal()">Close</button>
-          <button onclick="handlePayNow()">Pay now</button>
+          <button class="btn-outline" onclick="closePayModal()">Cancel</button>
+          <button onclick="submitPayment()">Send</button>
         </div>
       </div>
     </div>
@@ -714,23 +710,19 @@
     </div>
 
     <script>
-      // News ticker messages and rotation
+      // News ticker
       (function setupNewsTicker() {
         const messages = [
           "Welcome to BookBus — Find the best routes and book with ease.",
-          "Tip: Use View All Available to browse all buses filter with the search box.",
+          "Tip: Use View All Available to browse all buses, then filter.",
           "Pick a seat after selecting a bus to secure your preferred spot.",
           "Need help? Open the messages widget to contact admin.",
         ];
-
         const inner = document.getElementById("newsTickerInner");
         if (!inner) return;
-
         let idx = 0;
-        // Update the text every 8 seconds, fading between messages
         function showNextMessage() {
           idx = (idx + 1) % messages.length;
-          // fade out, change text, fade in
           inner.style.transition = "opacity 400ms ease";
           inner.style.opacity = "0";
           setTimeout(() => {
@@ -739,11 +731,20 @@
           }, 420);
         }
 
-        // Start rotation after a short delay so users see the first message
-        const rotateInterval = 8000; // 8 seconds per message
-        const rotateTimer = setInterval(showNextMessage, rotateInterval);
+        async function confirmBooking() {
+          const btn = document.querySelector(
+            "#bookingModalBackdrop button:last-child"
+          );
+          btn.disabled = true;
+          try {
+            // …send fetch
+          } finally {
+            btn.disabled = false;
+          }
+        }
 
-        // Optional: expose a function to update messages dynamically
+        const rotateInterval = 8000;
+        const rotateTimer = setInterval(showNextMessage, rotateInterval);
         window.updateNewsTickerMessages = function (newMessages) {
           if (!Array.isArray(newMessages) || newMessages.length === 0) return;
           messages.length = 0;
@@ -751,10 +752,7 @@
           idx = -1;
           showNextMessage();
           clearInterval(rotateTimer);
-          setInterval(showNextMessage, rotateInterval);
         };
-
-        // Ensure initial opacity is 1
         inner.style.opacity = "1";
       })();
 
@@ -766,14 +764,13 @@
       let bookingToPay = null;
       let messages = [];
 
-      // Pagination state for "available buses" and for search results
-      let availablePage = 1;
-      let availableLimit = 9;
-      let availableTotalPages = 1;
-
-      let searchPage = 1;
-      let searchLimit = 9;
-      let searchTotalPages = 1;
+      // Pagination
+      let availablePage = 1,
+        availableLimit = 9,
+        availableTotalPages = 1;
+      let searchPage = 1,
+        searchLimit = 9,
+        searchTotalPages = 1;
 
       const POLL_INTERVAL = 10 * 60 * 1000; // 10 minutes
       const BOOKING_INTERVAL = 10 * 60 * 1000;
@@ -904,7 +901,7 @@
         document.getElementById("myBookingsCard").style.display = "block";
         const storedName = localStorage.getItem("userName") || "";
         document.getElementById("bkName").value = storedName;
-        loadMyBookings();
+
         startMessagePolling();
         startUpdatePolling();
       }
@@ -919,8 +916,7 @@
         document.addEventListener("DOMContentLoaded", () => {
           const dateEl = document.getElementById("bkDate");
           const today = new Date().toISOString().split("T")[0];
-          dateEl.min = today; // only block past dates
-          // don’t set dateEl.value here
+          dateEl.min = today;
         });
       })();
 
@@ -931,7 +927,6 @@
       }
       function startUpdatePolling() {
         loadMyBookings();
-        setInterval(loadMyBookings, BOOKING_INTERVAL);
       }
 
       /* Messages */
@@ -974,7 +969,7 @@
         document.getElementById("messagesModalBackdrop").style.display = "none";
       }
 
-      /* SEARCH (POST) - uses /guest/booking endpoint */
+      /* SEARCH (POST) */
       async function searchBuses(page = 1, limit = searchLimit) {
         const bookingError = document.getElementById("bookingError");
         bookingError.style.display = "none";
@@ -1026,7 +1021,6 @@
             bookingError.style.display = "block";
             return;
           }
-          // Expecting { Buses:[], totalPages, currentPage }
           const buses = data.Buses || [];
           searchTotalPages = data.totalPages || 1;
           searchPage = data.currentPage || page;
@@ -1042,16 +1036,15 @@
         }
       }
 
-      /* VIEW ALL AVAILABLE (GET) - supports filters and pagination */
+      /* VIEW ALL (GET) */
       function BringAllBuss(page = 1, limit = availableLimit) {
-        // collect filters from the same inputs so "View All" respects them
         const from = document.getElementById("bkFrom").value.trim();
         const to = document.getElementById("bkTo").value.trim();
         const type = document.getElementById("bkType").value;
         const section = document.getElementById("bkSection").value;
         const seats = document.getElementById("bkseats").value;
         const date = document.getElementById("bkDate").value;
-        // build query string
+
         const params = new URLSearchParams();
         params.set("page", page);
         params.set("limit", limit);
@@ -1061,12 +1054,13 @@
         if (section) params.set("section", section);
         if (seats) params.set("seats", seats);
         if (date) params.set("date", date);
+
         fetchBuses(`/guest/availableBuses?${params.toString()}`, {
           mode: "available",
         });
       }
 
-      /* Generic fetch for GET paginated endpoints */
+      /* Generic fetch for GET */
       async function fetchBuses(url, opts = { mode: "available" }) {
         try {
           showLoader();
@@ -1079,24 +1073,20 @@
             alert(data.message || "Failed to fetch buses");
             return;
           }
+
           const buses = data.Buses || [];
           const totalPages = data.totalPages || 1;
           const currentPage = data.currentPage || 1;
+
           if (opts.mode === "available") {
             availableTotalPages = totalPages;
             availablePage = currentPage;
-            renderBusResults(buses, {
-              mode: "available",
-              totalPages,
-              currentPage,
-            });
-          } else {
-            renderBusResults(buses, {
-              mode: "available",
-              totalPages,
-              currentPage,
-            });
           }
+          renderBusResults(buses, {
+            mode: "available",
+            totalPages,
+            currentPage,
+          });
         } catch (err) {
           hideLoader();
           console.error(err);
@@ -1104,7 +1094,7 @@
         }
       }
 
-      /* Render bus cards and pagination */
+      /* Render bus cards */
       function renderBusResults(
         buses,
         meta = { mode: "available", totalPages: 1, currentPage: 1 }
@@ -1144,7 +1134,7 @@
           metaDiv.className = "bus-meta";
           metaDiv.textContent = `${bus.from || ""} → ${bus.to || ""} • ${
             bus.type || ""
-          } • Seats: ${bus.seats || "N/A"}`;
+          } • Seats: ${bus.seats || "N/A"} • price: ${bus.price || "N/A"}`;
 
           body.appendChild(title);
           body.appendChild(metaDiv);
@@ -1153,13 +1143,12 @@
           busList.appendChild(card);
         });
 
-        // pagination
         const totalPages = meta.totalPages || 1;
         const currentPage = meta.currentPage || 1;
         renderPagination(totalPages, currentPage, meta.mode || "available");
       }
 
-      /* Render pagination controls */
+      /* Render pagination */
       function renderPagination(totalPages, currentPage, mode = "available") {
         const container = document.getElementById("paginationControls");
         container.innerHTML = "";
@@ -1174,7 +1163,6 @@
           return btn;
         };
 
-        // Prev
         container.appendChild(
           createBtn("Prev", currentPage <= 1, "", () => {
             const target = currentPage - 1;
@@ -1183,7 +1171,6 @@
           })
         );
 
-        // page numbers (show window)
         const maxButtons = 7;
         let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
         let end = Math.min(totalPages, start + maxButtons - 1);
@@ -1222,7 +1209,6 @@
           );
         }
 
-        // Next
         container.appendChild(
           createBtn("Next", currentPage >= totalPages, "", () => {
             const target = currentPage + 1;
@@ -1235,9 +1221,8 @@
       /* Booking modal */
       function openBookingModal(bus) {
         selectedBus = bus;
-
-        // Ensure currentSearchData has values even if user came from "View All Available"
         currentSearchData = currentSearchData || {};
+
         if (!currentSearchData.date && bus.date)
           currentSearchData.date = bus.date;
         if (!currentSearchData.section && bus.section)
@@ -1247,24 +1232,22 @@
         if (!currentSearchData.to && bus.to) currentSearchData.to = bus.to;
         if (!currentSearchData.type && bus.type)
           currentSearchData.type = bus.type;
-        if (!currentSearchData.name) {
+        if (!currentSearchData.name)
           currentSearchData.name =
             document.getElementById("bkName")?.value || "N/A";
-        }
 
         const d = currentSearchData;
         const modalBody = document.getElementById("modalBody");
         modalBody.innerHTML = `
-    <p><b>Bus:</b> ${bus.Busname || bus.name || "Bus"}</p>
-    <p><b>Route:</b> ${bus.from || ""} → ${bus.to || ""}</p>
-    <p><b>Type:</b> ${bus.type || "N/A"}</p>
-    <p><b>Date:</b> ${d.date || "N/A"}</p>
-    <p><b>Section:</b> ${d.section || "N/A"}</p>
-    <p><b>Passenger:</b> ${d.name || "N/A"}</p>
-  `;
+        <p><b>Bus:</b> ${bus.Busname || bus.name || "Bus"}</p>
+        <p><b>Route:</b> ${bus.from || ""} → ${bus.to || ""}</p>
+        <p><b>Type:</b> ${bus.type || "N/A"}</p>
+        <p><b>Date:</b> ${d.date || "N/A"}</p>
+        <p><b>Section:</b> ${d.section || "N/A"}</p>
+        <p><b>Price:</b> ${bus.price || "N/A"}</p>
+      `;
         document.getElementById("bookingModalBackdrop").style.display = "flex";
       }
-
       function closeBookingModal() {
         document.getElementById("bookingModalBackdrop").style.display = "none";
         selectedBus = null;
@@ -1273,6 +1256,10 @@
       /* Confirm booking */
       async function confirmBooking() {
         if (!selectedBus || !currentSearchData) return;
+        if (!selectedSeat) {
+          alert("Select a seat before booking.");
+          return;
+        }
         const d = currentSearchData;
         try {
           showLoader();
@@ -1289,6 +1276,7 @@
               from: d.from,
               to: d.to,
               type: d.type,
+              price: String(selectedBus.price || "N/A"),
               Boarding:
                 d.Boarding === "true" || d.Boarding === true ? true : false,
               bus_no: selectedBus.bus_no,
@@ -1309,12 +1297,13 @@
         }
       }
 
-      /* Load my bookings */
+      /* Load my bookings — dedupe and use financial_status consistently */
       async function loadMyBookings() {
         const bookingsEmpty = document.getElementById("bookingsEmpty");
         const bookingsList = document.getElementById("bookingsList");
         bookingsList.innerHTML = "";
         bookingsEmpty.style.display = "none";
+
         try {
           showLoader();
           const res = await fetch("/guest/mybookings", {
@@ -1322,38 +1311,55 @@
           });
           const data = await res.json();
           hideLoader();
+
           if (!res.ok) {
             bookingsEmpty.textContent =
               data.message || "Could not load bookings.";
             bookingsEmpty.style.display = "block";
             return;
           }
-          const bookings = data.Buses || [];
-          if (!bookings.length) {
+
+          let bookings = data.Buses || [];
+          if (!Array.isArray(bookings) || bookings.length === 0) {
             bookingsEmpty.textContent =
               "No bookings yet. Search and book a bus.";
             bookingsEmpty.style.display = "block";
             return;
           }
+
+          // Defensive dedupe by _id
+          const map = new Map();
+          bookings.forEach((b) => {
+            if (b && b._id) map.set(String(b._id), b);
+          });
+          bookings = Array.from(map.values());
+
           bookings.forEach((b) => {
             const item = document.createElement("div");
             item.className = "booking-item";
+
             const left = document.createElement("div");
-            left.innerHTML = `<div style="font-size:13px;font-weight:600;">${
+            left.innerHTML = `
+            <div style="font-size:13px;font-weight:600;">${
               b.bus?.Busname || b.busName || "Bus"
-            }</div><div class="small">${b.from} → ${b.to} • ${b.date} • ${
+            }</div>
+            <div class="small">${b.from} → ${b.to} • ${b.date} • ${
               b.section
-            }</div>`;
+            }</div>
+          `;
+
             const right = document.createElement("div");
             right.style.textAlign = "right";
+
             const isConfirmed =
-              (b.financial_Status || b.status) === "confirmed";
+              (b.financial_Status) ===
+              "confirmed";
             const badge = document.createElement("span");
             badge.className =
               "badge " + (isConfirmed ? "confirmed" : "pending");
-            badge.textContent =
-              b.status || (isConfirmed ? "confirmed" : "pending");
+            badge.textContent = isConfirmed ? "confirmed" : "pending";
             right.appendChild(badge);
+
             if (!isConfirmed) {
               const payBtn = document.createElement("button");
               payBtn.textContent = "Pay/Cancel";
@@ -1367,6 +1373,7 @@
               detailsBtn.onclick = () => openTripDetailsModal(b);
               right.appendChild(detailsBtn);
             }
+
             item.appendChild(left);
             item.appendChild(right);
             bookingsList.appendChild(item);
@@ -1378,22 +1385,28 @@
         }
       }
 
-      /* Pay modal */
+      /* Pay modal — includes fare, route, date, section, terminal/time, and PIN */
       function openPayModal(booking) {
         bookingToPay = booking;
+
         const terminal =
           booking.terminal === "N/A" ? "Awaiting" : booking.terminal;
         const time =
           booking.Time_Boarding === "N/A" ? "Awaiting" : booking.Time_Boarding;
+
         const body = document.getElementById("payModalBody");
         body.innerHTML = `
         <p><b>Booking ID:</b> ${booking._id || booking.id}</p>
-        <p><b>Terminal:</b> ${terminal}</p>
+        <p><b>Fare:</b> ${booking.price}</p>
+        <p><b>Route:</b> ${booking.from} → ${booking.to}</p>
         <p><b>Date:</b> ${booking.date}</p>
-        <p><b>Time:</b> ${time}</p>
         <p><b>Section:</b> ${booking.section}</p>
+        <p><b>Terminal:</b> ${terminal}</p>
+        <p><b>Boarding time:</b> ${time}</p>
+        <p>Enter your 4-digit PIN to confirm payment.</p>
         <button id="cancelBtn" class="btn-outline">Cancel Trip</button>
       `;
+
         document.getElementById("payModalBackdrop").style.display = "flex";
         document.getElementById("cancelBtn").onclick = () =>
           canceltrip(booking);
@@ -1403,6 +1416,45 @@
         bookingToPay = null;
       }
 
+      async function submitPayment() {
+        const inputs = document.querySelectorAll(".pin-inputs input");
+        const pin = Array.from(inputs)
+          .map((i) => i.value)
+          .join("");
+        if (pin.length !== 4) {
+          alert("Please enter a 4-digit PIN.");
+          return;
+        }
+
+        try {
+          showLoader();
+          const res = await fetch(`/guest/pay/${bookingToPay._id}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({ price: String(bookingToPay.price), pin }),
+          });
+          const data = await res.json();
+          hideLoader();
+
+          if (!res.ok) {
+            alert(data.message || "Payment failed");
+            return;
+          }
+
+          alert(data.message || "Payment successful");
+          closePayModal();
+          loadMyBookings();
+        } catch (err) {
+          console.log(err);
+          hideLoader();
+          alert("Network error during payment");
+        }
+      }
+
+      /* Cancel trip */
       async function canceltrip(booking) {
         const bookingError = document.getElementById("bookingError");
         try {
@@ -1444,6 +1496,7 @@
         const date = booking.date
           ? new Date(booking.date).toLocaleDateString()
           : "N/A";
+
         const body = document.getElementById("tripDetailsBody");
         body.innerHTML = `
         <div class="trip-details-card">
@@ -1460,16 +1513,20 @@
             <p><b>Section:</b> ${booking.section}</p>
             <p><b>Terminal:</b> ${terminal}</p>
             <p><b>Boarding Time:</b> ${time}</p>
+            <p><b>price:</b> ${booking.price}</p>
           </div>
           <hr/>
           <div class="trip-section">
             <p><b>Bus No:</b> ${booking.bus_no}</p>
             <p><b>Seat Number:</b> ${booking.seatNumber}</p>
             <p><b>Type:</b> ${booking.type}</p>
+            <p><b>price:</b> ${booking.price}</p>
           </div>
           <hr/>
           <div class="trip-section">
-            <p><b>Financial Status:</b> ${booking.financial_Status}</p>
+            <p><b>Financial Status:</b> ${
+              booking.financial_status || booking.financial_Status
+            }</p>
             <p><b>Boarding Status:</b> ${
               booking.Boarding ? "Boarded" : "Not Boarded"
             }</p>
@@ -1479,18 +1536,12 @@
         document.getElementById("tripDetailsBackdrop").style.display = "flex";
       }
 
-      /* Payment placeholder */
-      async function handlePayNow() {
-        if (!bookingToPay) return;
-        alert("Payment flow will be wired here.");
-        closePayModal();
-      }
-
       /* Seat selection */
       async function openSeatModal() {
         if (!selectedBus) return;
         selectedSeat = null;
         document.getElementById("confirmSeatBtn").disabled = true;
+
         try {
           showLoader();
           const res = await fetch(`/guest/bookedseats/${selectedBus._id}`, {
