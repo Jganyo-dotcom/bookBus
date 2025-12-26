@@ -94,7 +94,7 @@ const LoginUser = async (req, res) => {
 // get taken seats
 const AlreadyBookedseats = async (req, res) => {
   const BusId = req.params.busId;
-  console.log(BusId);
+
   try {
     const full = await bookedbusesSchema.find(
       { Bus: BusId },
@@ -112,7 +112,6 @@ const AlreadyBookedseats = async (req, res) => {
 
 const availableBuses = async (req, res) => {
   try {
-    console.log("hmmmm");
 
     const { error, value } = validateBookingBus.validate(req.body);
     if (error)
@@ -122,7 +121,6 @@ const availableBuses = async (req, res) => {
     } else {
       Boarding = false;
     }
-    console.log(value.seats);
     const Buses = await BusSchema.find({
       from: value.from,
       to: value.to,
@@ -135,7 +133,6 @@ const availableBuses = async (req, res) => {
     });
     if (!Buses || Buses.length === 0)
       return res.status(404).json({ message: "No Buses available" });
-    console.log(Buses);
     console.log(`${req.user.name} with email ${req.user.email} requested `);
     return res.status(200).json({ message: "Success", Buses });
   } catch (error) {
@@ -176,7 +173,7 @@ const allAvalableBuses = async (req, res) => {
       // If seats is provided, match buses with at least that many seats
       // (adjust logic if you want exact match instead)
       const seatsNum = parseInt(seats, 10);
-      if (!Number.isNaN(seatsNum)) filter.seats = { $gte: seatsNum };
+      if (!Number.isNaN(seatsNum)) filter.seats = seatsNum;
     }
 
     // Count total matching documents
@@ -374,7 +371,6 @@ const getPassengers = async (req, res) => {
     const passengers = await bookedbusesSchema
       .find({ Bus: busId })
       .populate("passenger", "name email");
-    console.log(passengers);
     if (!passengers || passengers.length === 0)
       return res.status(404).json({ message: "not found" });
     return res.status(200).json({ message: "success", passengers });

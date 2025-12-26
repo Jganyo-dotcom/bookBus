@@ -917,7 +917,7 @@
           const data = await res.json();
           const busesArray =
             data.allbuses ?? data.buses ?? (data.bus ? [data.bus] : []);
-          if (data.message) console.log(data.message);
+          if (data.message) 
           renderBuses(busesArray);
         } catch (err) {
           console.log(err);
@@ -1110,7 +1110,7 @@ async function deleteUser(userId) {
 
     const data = await res.json();
     const passengers = data.passengers || [];
-    console.log(passengers);
+   
 
     // Build table rows with full booking info
     let rows = passengers.map(p => `
@@ -1168,8 +1168,6 @@ async function deleteUser(userId) {
         const row = e.target.closest("tr");
         const tripId = row.dataset.tripId;
         const passengerId = row.dataset.passengerId;
-        console.log(passengerId)
-        console.log(tripId)
         await cancelPassengerTrip(tripId, passengerId);
         close_passengersBody()
       });
@@ -1341,7 +1339,7 @@ async function cancelPassengerTrip(tripId, passengerId) {
           fetchAllBuses();
         } catch (err) {
           console.log(err);
-          alert("Update failed");
+          alert(err);
         } finally {
           hideLoader();
         }

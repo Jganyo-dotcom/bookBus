@@ -38,7 +38,7 @@ const LoginStaff = async (req, res) => {
 //get user by id
 const getUserById = async (req, res) => {
   const id = req.params.id;
-  console.log(req.user.name);
+
   try {
     if (req.user.role !== "Staff") {
       return res.status(403).json({ message: "you dont have permision" });

@@ -528,7 +528,7 @@
           <button class="btn-outline" onclick="handleLogout()">Logout</button>
         </div>
         <p class="small" style="margin-bottom: 10px">
-          Fill the form to search for available buses.
+          use the search boxes as filter for all bus.
         </p>
 
         <input id="bkName" type="hidden" />
@@ -728,9 +728,9 @@
 
       socket.on("connect", () => {
         const userId = localStorage.getItem("userId");
-        if (userId) {
-          console.log("Rejoining room with userId:", userId);
+        if (userId && !socket.hasJoined) {
           socket.emit("joinRoom", userId);
+          socket.hasJoined = true;
         }
       });
 
@@ -739,7 +739,6 @@
       // =======================
       socket.off("bookingUpdated"); // prevent duplicate handlers
       socket.on("bookingUpdated", (updatedBooking) => {
-        console.log("Booking updated payload:", updatedBooking);
 
         // Just rebuild the modal with the fresh data
         openTripDetailsModal(updatedBooking);
@@ -881,11 +880,12 @@
           localStorage.setItem("userName", data.tryingToLoginUser.name); // ✅ fixed
 
           const userId = data.tryingToLoginUser._id;
-          console.log("Joining room with userId:", userId);
-          socket.emit("joinRoom", userId);
+          if (userId && !socket.hasJoined) {
+            socket.emit("joinRoom", userId);
+            socket.hasJoined = true;
+          }
 
           showBookingUI();
-          loadMyBookings(); // ✅ render bookings immediately
         } catch {
           hideLoader();
           authError.textContent = "Network error. Try again.";
@@ -910,9 +910,6 @@
 
         const storedName = localStorage.getItem("userName") || "";
         document.getElementById("bkName").value = storedName;
-
-        startMessagePolling();
-        startUpdatePolling();
       }
 
       // =======================
@@ -925,7 +922,11 @@
         if (token) {
           authToken = token;
           showBookingUI();
-          if (userId) socket.emit("joinRoom", userId); // ✅ join immediately
+          if (userId && !socket.hasJoined) {
+            socket.emit("joinRoom", userId);
+            socket.hasJoined = true;
+          }
+          // ✅ join immediately
           loadMyBookings(); // ✅ render bookings immediately
         }
 
@@ -942,9 +943,6 @@
       function startMessagePolling() {
         fetchMessages();
         setInterval(fetchMessages, POLL_INTERVAL);
-      }
-      function startUpdatePolling() {
-        loadMyBookings();
       }
 
       // =======================

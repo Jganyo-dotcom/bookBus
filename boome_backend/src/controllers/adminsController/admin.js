@@ -95,7 +95,7 @@ const registerNewStaff = async (req, res) => {
 
 //get all users
 const getUsers = async (req, res) => {
-  console.log(" its users");
+
   const Users = await UserSchema.find({});
   return res.status(200).json({ message: "sucess", Users });
 };
@@ -110,7 +110,7 @@ const getDrivers = async (req, res) => {
 const getOneDriver = async (req, res) => {
   const name = req.query.name?.trim();
 
-  console.log("Searching for driver:", name);
+ 
 
   const driver = await driverModule.findOne({
     name: { $regex: `^${name}$`, $options: "i" },
@@ -128,7 +128,7 @@ const getOneDriver = async (req, res) => {
     "name email"
   );
 
-  console.log("Buses found:", allbuses.length);
+
 
   return res.status(200).json({
     message: "success",
@@ -160,7 +160,7 @@ const getStaffandDelete = async (req, res) => {
 //get user by id
 const getUserById = async (req, res) => {
   const id = req.params.id;
-  console.log(req.user.name);
+ 
   try {
     if (req.user.role !== "Admin") {
       return res.status(403).json({ message: "you dont have permision" });
@@ -273,8 +273,7 @@ const canceltrip = async (req, res) => {
   try {
     const tripId = req.params.id;
     const passengerId = req.params.di;
-    console.log(tripId);
-    console.log(passengerId);
+  
     const trip = await booked_buses.findByIdAndDelete(tripId, {
       passenger: passengerId,
     });

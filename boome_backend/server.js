@@ -6,6 +6,7 @@ const staffRoute = require("./src/routes/staff");
 const adminRoute = require("./src/routes/adminRoutes/admin");
 const BusRoute = require("./src/routes/adminRoutes/busRoutes");
 const app = express();
+const morgan = require("morgan");
 const PORT = process.env.PORT || 5555;
 const path = require("path");
 const http = require("http");
@@ -17,7 +18,7 @@ app.use(express.urlencoded({ extended: true })); // for forms
 app.use(express.json());
 
 init(server);
-
+app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "src/public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

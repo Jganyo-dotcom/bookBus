@@ -68,7 +68,7 @@ const deleteBus = async (req, res) => {
     const bus_driver = await driverModule.findById(driverId);
     if (bus_driver) {
       await driverModule.findByIdAndDelete(driverId);
-      console.log("Deleted driver");
+      
     } else {
       console.log("Driver not found");
     }
@@ -102,7 +102,7 @@ const deleteBus = async (req, res) => {
 //request for all buses
 const allbuses = async (req, res) => {
   try {
-    console.log("bus");
+
     const allbuses = await BusSchema.find({}).populate("Driver", "name email");
 
     res.status(200).json({ message: "success", allbuses });
@@ -113,12 +113,11 @@ const allbuses = async (req, res) => {
 };
 
 const Bus_Boarding = async (req, res) => {
-  console.log(req.params.id);
   const Bus_id = req.params.id;
   const { error, value } = validateBoardingBus.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
   try {
-    console.log(value);
+ 
     const existing_bus = await BusSchema.find({
       _id: Bus_id,
       financial_Status: "confirmed",
@@ -157,7 +156,7 @@ const Bus_Boarding = async (req, res) => {
 };
 
 const updateBus = async (req, res) => {
-  console.log(req.params.id);
+
   const Bus_id = req.params.id;
   const { error, value } = validateBoardingBus.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
@@ -188,7 +187,7 @@ const updateBus = async (req, res) => {
 
 const queryBus = async (req, res) => {
   const BusNo = req.query.number;
-  console.log(BusNo);
+
   try {
     const allbuses = await BusSchema.find({ bus_no: BusNo }).populate(
       "Driver",
