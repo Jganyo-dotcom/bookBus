@@ -607,6 +607,7 @@
           No bookings yet. Search and book a bus to see it here.
         </div>
         <div id="bookingsList"></div>
+        <div id="bookingsPaginationControls" class="pagination"></div>
       </div>
     </div>
 
@@ -1311,17 +1312,31 @@
       // =======================
       // Load my bookings (with data-booking-id)
       // =======================
-      async function loadMyBookings() {
+      async function loadMyBookings(page = 1, limit = 5) {
         const bookingsEmpty = document.getElementById("bookingsEmpty");
         const bookingsList = document.getElementById("bookingsList");
+        const paginationControls = document.getElementById(
+          "bookingsPaginationControls"
+        );
+
+        // Defensive checks
+        if (!bookingsList || !bookingsEmpty || !paginationControls) {
+          console.error("Missing bookings DOM elements");
+          return;
+        }
+
         bookingsList.innerHTML = "";
         bookingsEmpty.style.display = "none";
+        paginationControls.innerHTML = "";
 
         try {
           showLoader();
-          const res = await fetch("/guest/mybookings", {
-            headers: { Authorization: `Bearer ${authToken}` },
-          });
+          const res = await fetch(
+            `/guest/mybookings?page=${page}&limit=${limit}`,
+            {
+              headers: { Authorization: `Bearer ${authToken}` },
+            }
+          );
           const data = await res.json();
           hideLoader();
 
@@ -1332,34 +1347,45 @@
             return;
           }
 
-          let bookings = data.Buses || [];
-          if (!Array.isArray(bookings) || bookings.length === 0) {
+          const bookings = Array.isArray(data.pastBookings)
+            ? data.pastBookings
+            : [];
+          const pagination = data.pagination || {
+            page: 1,
+            totalPages: 1,
+            limit,
+          };
+
+          if (bookings.length === 0) {
             bookingsEmpty.textContent =
               "No bookings yet. Search and book a bus.";
             bookingsEmpty.style.display = "block";
+            // still render a single page button so UI is consistent
+            renderPaginationControls(
+              paginationControls,
+              pagination,
+              loadMyBookings
+            );
             return;
           }
 
-          const map = new Map();
-          bookings.forEach((b) => {
-            if (b && b._id) map.set(String(b._id), b);
-          });
-          bookings = Array.from(map.values());
-
+          // Render bookings
           bookings.forEach((b) => {
             const item = document.createElement("div");
             item.className = "booking-item";
-            item.setAttribute("data-booking-id", String(b._id)); // ✅ critical
+            item.setAttribute("data-booking-id", String(b._id));
 
             const left = document.createElement("div");
             left.innerHTML = `
-              <div style="font-size:13px;font-weight:600;">
-                ${b.bus?.Busname || b.busName || "Bus"}
-              </div>
-              <div class="small">
-                ${b.from} → ${b.to} • ${b.date} • ${b.section}
-              </div>
-            `;
+        <div style="font-size:13px;font-weight:600;">
+          ${b.bus?.Busname || b.busName || "Bus"}
+        </div>
+        <div class="small">
+          ${b.from || ""} → ${b.to || ""} • ${
+              b.date ? new Date(b.date).toLocaleDateString() : ""
+            } • ${b.section || ""}
+        </div>
+      `;
 
             const right = document.createElement("div");
             right.style.textAlign = "right";
@@ -1389,11 +1415,68 @@
             item.appendChild(right);
             bookingsList.appendChild(item);
           });
-        } catch {
+
+          // Render pagination controls
+          renderPaginationControls(
+            paginationControls,
+            pagination,
+            loadMyBookings
+          );
+        } catch (err) {
+          console.error(err);
           hideLoader();
           bookingsEmpty.textContent = "Network error while loading bookings.";
           bookingsEmpty.style.display = "block";
         }
+      }
+
+      // Helper to render pagination buttons (numbered + Prev/Next)
+      function renderPaginationControls(container, pagination, onPageClick) {
+        container.innerHTML = "";
+        const currentPage = parseInt(pagination.page || 1, 10);
+        const totalPages = Math.max(
+          1,
+          parseInt(pagination.totalPages || 1, 10)
+        );
+        const pageLimit = parseInt(pagination.limit || 5, 10);
+
+        // Prev
+        const makeBtn = (label, disabled, cls, cb) => {
+          const btn = document.createElement("button");
+          btn.className = "page-btn" + (cls ? " " + cls : "");
+          btn.textContent = label;
+          btn.disabled = !!disabled;
+          btn.onclick = cb;
+          return btn;
+        };
+
+        container.appendChild(
+          makeBtn("Prev", currentPage <= 1, "", () =>
+            onPageClick(currentPage - 1, pageLimit)
+          )
+        );
+
+        // Show up to 5 numbered buttons centered on current page
+        const maxToShow = 5;
+        let start = Math.max(1, currentPage - Math.floor(maxToShow / 2));
+        let end = Math.min(totalPages, start + maxToShow - 1);
+        if (end - start < maxToShow - 1)
+          start = Math.max(1, end - maxToShow + 1);
+
+        for (let p = start; p <= end; p++) {
+          const isActive = p === currentPage;
+          container.appendChild(
+            makeBtn(p, false, isActive ? "active" : "", () =>
+              onPageClick(p, pageLimit)
+            )
+          );
+        }
+
+        container.appendChild(
+          makeBtn("Next", currentPage >= totalPages, "", () =>
+            onPageClick(currentPage + 1, pageLimit)
+          )
+        );
       }
 
       // =======================

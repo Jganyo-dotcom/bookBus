@@ -3,6 +3,11 @@ const mongoose = require("mongoose");
 const BookedBusSchema = new mongoose.Schema(
   {
     Bus: { type: mongoose.Schema.Types.ObjectId, ref: "Buses", required: true },
+    Booked_type: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "BookedBuses",
+      required: true,
+    },
     seatNumber: { type: Number, required: true },
     bus_no: { type: String, required: true },
     from: { type: String, required: true },

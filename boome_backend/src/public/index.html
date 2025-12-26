@@ -917,6 +917,7 @@
           const data = await res.json();
           const busesArray =
             data.allbuses ?? data.buses ?? (data.bus ? [data.bus] : []);
+            console.log(busesArray)
           if (data.message) 
           renderBuses(busesArray);
         } catch (err) {

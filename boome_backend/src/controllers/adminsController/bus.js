@@ -198,7 +198,8 @@ const queryBus = async (req, res) => {
     if (!allbuses) {
       return res.status(404).json({ mesage: "bus not found" });
     }
-    return res.status(200).json({ mesage: "success", allbuses });
+    console.log(allbuses);
+    return res.status(200).json({ message: "success", allbuses });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "something went wrong" });

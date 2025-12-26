@@ -228,18 +228,38 @@ module.exports = {
 
 const MyBookings = async (req, res) => {
   try {
-    const Buses = await bookedbusesSchema.find({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const pastBookings = await PastbookedBuses.find({ passenger: req.user.id })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const pastCount = await PastbookedBuses.countDocuments({
       passenger: req.user.id,
     });
-    if (!Buses || Buses.length === 0)
+
+    if (pastBookings.length === 0) {
       return res.status(404).json({ message: "No records were found" });
-    console.log(`${req.user.name} with email ${req.user.email} requested `);
-    return res.status(200).json({ message: "Success", Buses });
+    }
+
+    return res.status(200).json({
+      message: "Success",
+      pastBookings,
+      pagination: {
+        page,
+        limit,
+        total: pastCount,
+        totalPages: Math.ceil(pastCount / limit),
+      },
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res
       .status(500)
-      .json({ message: "Something went wrong while getting avalable buses" });
+      .json({ message: "Something went wrong while getting available buses" });
   }
 };
 
@@ -267,7 +287,7 @@ const BookBus = async (req, res) => {
       type: value.type,
       Boarding: value.Boarding,
       date: value.date,
-      financial_status: "pending",
+      financial_Status: "pending",
       passenger: req.user.id,
       bus_no: value.bus_no,
       section: value.section,
@@ -282,11 +302,12 @@ const BookBus = async (req, res) => {
       type: value.type,
       Boarding: value.Boarding,
       date: value.date,
-      financial_status: "pending",
+      financial_Status: "pending",
       passenger: req.user.id,
       bus_no: value.bus_no,
       section: value.section,
       price: value.price,
+      Booked_type: booking._id,
     });
     await pastP.save();
 
@@ -306,14 +327,22 @@ const CancelBooking = async (req, res) => {
   const passengerId = req.user.id;
   const bookingId = req.params.bookingId;
   try {
-    const findBus = await bookedbusesSchema.find({
+    const findBus = await bookedbusesSchema.findOne({
       _id: bookingId,
       passenger: passengerId,
     });
-    if (!findBus || findBus.length === 0)
+    const past_findBus = await PastbookedBuses.findOne({
+      Bookin_type: bookingId,
+      passenger: passengerId,
+    });
+    if (!findBus && !past_findBus)
       return res.status(404).json({ message: "booking not found" });
     const cancelledBus = await bookedbusesSchema.findOneAndDelete({
       _id: bookingId,
+      passenger: passengerId,
+    });
+    const past_cancelledBus = await PastbookedBuses.findOneAndDelete({
+      Booked_type: bookingId,
       passenger: passengerId,
     });
     res.status(200).json({ messagee: "Ride is deleted" });
