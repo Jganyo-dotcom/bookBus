@@ -724,7 +724,11 @@
       // =======================
       // Socket.io connection
       // =======================
-      const socket = io("http://127.0.0.1:45555");
+      const socket = io(
+        window.location.hostname === "localhost"
+          ? "http://127.0.0.1:45555"
+          : "https://bookbus-2.onrender.com"
+      );
 
       socket.on("connect", () => {
         const userId = localStorage.getItem("userId");
@@ -739,7 +743,6 @@
       // =======================
       socket.off("bookingUpdated"); // prevent duplicate handlers
       socket.on("bookingUpdated", (updatedBooking) => {
-
         // Just rebuild the modal with the fresh data
         openTripDetailsModal(updatedBooking);
       });
