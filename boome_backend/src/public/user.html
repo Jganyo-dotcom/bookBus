@@ -773,6 +773,22 @@
         document.getElementById("loader").style.display = "none";
       }
 
+      // Show the messages modal
+      function openMessagesModal() {
+        const backdrop = document.getElementById("messagesModalBackdrop");
+        if (backdrop) {
+          backdrop.style.display = "flex"; // or "block" depending on your CSS
+        }
+      }
+
+      // Hide the messages modal
+      function closeMessagesModal() {
+        const backdrop = document.getElementById("messagesModalBackdrop");
+        if (backdrop) {
+          backdrop.style.display = "none";
+        }
+      }
+
       // =======================
       // Auth tabs/messages (unchanged UI helpers)
       // =======================

@@ -4,7 +4,7 @@ const BookedBusSchema = new mongoose.Schema(
   {
     Bus: { type: mongoose.Schema.Types.ObjectId, ref: "Buses", required: true },
     seatNumber: { type: Number, required: true },
-    bus_no: { type: String, unique: true, required: true },
+    bus_no: { type: String, required: true },
     from: { type: String, required: true },
     to: { type: String, required: true },
     type: { type: String, required: true },
