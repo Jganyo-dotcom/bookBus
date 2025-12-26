@@ -9,6 +9,7 @@ const driverModule = require("../../models/driver.module");
 const { cloudinary } = require("../../middlewares/cloud");
 const booked_buses = require("../../models/booked_buses");
 const { getIO } = require("../../../utils/socket");
+const pastpassengers = require("../../models/pastpassengers");
 
 const add_Bus = async (req, res) => {
   const { error, value } = validateaddingBus.validate(req.body);
@@ -68,7 +69,6 @@ const deleteBus = async (req, res) => {
     const bus_driver = await driverModule.findById(driverId);
     if (bus_driver) {
       await driverModule.findByIdAndDelete(driverId);
-      
     } else {
       console.log("Driver not found");
     }
@@ -102,7 +102,6 @@ const deleteBus = async (req, res) => {
 //request for all buses
 const allbuses = async (req, res) => {
   try {
-
     const allbuses = await BusSchema.find({}).populate("Driver", "name email");
 
     res.status(200).json({ message: "success", allbuses });
@@ -117,21 +116,25 @@ const Bus_Boarding = async (req, res) => {
   const { error, value } = validateBoardingBus.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
   try {
- 
     const existing_bus = await BusSchema.find({
       _id: Bus_id,
-      financial_Status: "confirmed",
     });
     // find bus no is existing
     if (!existing_bus) {
       return res.status(404).json({ mesage: "bus not found" });
     }
-    const Board = await BusSchema.findByIdAndUpdate(Bus_id, value, {
+    const UpdatedBooking = await booked_buses.find(
+      { Bus: Bus_id } // match by bus
+    );
+    if (!UpdatedBooking || UpdatedBooking.length === 0) {
+      return res.status(200).json({ message: "No bookings yet" });
+    }
+    const Board = await pastpassengers.findByIdAndUpdate(Bus_id, value, {
       new: true,
       runValidators: true,
     });
     const updatedBooking = await booked_buses.findOneAndUpdate(
-      { Bus: Bus_id }, // match by bus and passenger
+      { Bus: Bus_id, financial_Status: "confirmed" },
       value,
       { new: true, runValidators: true }
     );
@@ -151,12 +154,11 @@ const Bus_Boarding = async (req, res) => {
     return res.status(200).json({ message: "Success" });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "something went wrong" });
+    return res.status(500).json({ message: "something went wrong okay" });
   }
 };
 
 const updateBus = async (req, res) => {
-
   const Bus_id = req.params.id;
   const { error, value } = validateBoardingBus.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });

@@ -112,7 +112,6 @@ const AlreadyBookedseats = async (req, res) => {
 
 const availableBuses = async (req, res) => {
   try {
-
     const { error, value } = validateBookingBus.validate(req.body);
     if (error)
       return res.status(400).json({ message: error.details[0].message });
@@ -275,6 +274,21 @@ const BookBus = async (req, res) => {
       price: value.price,
     });
     await booking.save();
+    const pastP = new PastbookedBuses({
+      Bus: busId,
+      seatNumber: value.seatNumber,
+      from: value.from,
+      to: value.to,
+      type: value.type,
+      Boarding: value.Boarding,
+      date: value.date,
+      financial_status: "pending",
+      passenger: req.user.id,
+      bus_no: value.bus_no,
+      section: value.section,
+      price: value.price,
+    });
+    await pastP.save();
 
     res.status(201).json({
       message: "Booking is awaiting payment to complete transaction",
@@ -334,25 +348,34 @@ const payment = async (req, res) => {
       // update booking
       const updatedBooking = await bookedbusesSchema.findByIdAndUpdate(
         bookingId,
-        { financial_Status: "confirmed" }, // use consistent field name
+        { financial_Status: "confirmed" },
         { new: true }
       );
 
       // update past bookings
       const associatedBus = await BusSchema.findById(bus.Bus);
-      await PastbookedBuses.findOneAndUpdate(
+      const updatethem = await PastbookedBuses.findOneAndUpdate(
         { bus_no: bus.bus_no, passenger: req.user.id },
         {
           financial_Status: "confirmed",
-          terminal: associatedBus.terminal,
-          Time_Boarding: associatedBus.Time_Boarding,
+        },
+        { new: true }
+      );
+
+      // since the pastboookings has the correct messages
+      const updateMe = await bookedbusesSchema.findOneAndUpdate(
+        { bus_no: bus.bus_no, passenger: req.user.id },
+        {
+          financial_Status: "confirmed",
+          terminal: updatethem.terminal,
+          Time_Boarding: updatethem.Time_Boarding,
         },
         { new: true }
       );
 
       return res.status(200).json({
         message: `Payment of ${value.price} confirmed for Elikem Transport`,
-        booking: updatedBooking,
+        booking: updateMe,
       });
     } else {
       return res.status(400).json({ message: "Invalid payment details" });
