@@ -13,7 +13,7 @@ const http = require("http");
 const server = http.createServer(app);
 const { init } = require("./utils/socket");
 
-connection(); // not called or a reason
+connection();
 app.use(express.urlencoded({ extended: true })); // for forms
 app.use(express.json());
 
