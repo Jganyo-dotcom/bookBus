@@ -11,6 +11,7 @@ const DriversSchema = require("../../models/driver.module");
 const BusModel = require("../../models/addBus");
 const driverModule = require("../../models/driver.module");
 const booked_buses = require("../../models/booked_buses");
+const pastpassengers = require("../../models/pastpassengers");
 
 const LoginAdmin = async (req, res) => {
   const { error, value } = validationAdminLogin.validate(req.body);
@@ -95,7 +96,6 @@ const registerNewStaff = async (req, res) => {
 
 //get all users
 const getUsers = async (req, res) => {
-
   const Users = await UserSchema.find({});
   return res.status(200).json({ message: "sucess", Users });
 };
@@ -109,8 +109,6 @@ const getDrivers = async (req, res) => {
 //get driver by name
 const getOneDriver = async (req, res) => {
   const name = req.query.name?.trim();
-
- 
 
   const driver = await driverModule.findOne({
     name: { $regex: `^${name}$`, $options: "i" },
@@ -127,8 +125,6 @@ const getOneDriver = async (req, res) => {
     "Driver",
     "name email"
   );
-
-
 
   return res.status(200).json({
     message: "success",
@@ -160,7 +156,7 @@ const getStaffandDelete = async (req, res) => {
 //get user by id
 const getUserById = async (req, res) => {
   const id = req.params.id;
- 
+
   try {
     if (req.user.role !== "Admin") {
       return res.status(403).json({ message: "you dont have permision" });
@@ -273,13 +269,19 @@ const canceltrip = async (req, res) => {
   try {
     const tripId = req.params.id;
     const passengerId = req.params.di;
-  
-    const trip = await booked_buses.findByIdAndDelete(tripId, {
-      passenger: passengerId,
-    });
-    if (!trip) return res.status(404).json({ message: "not found" });
 
-    return res.status(200).json({ message: "cancelled" });
+    const trip = await booked_buses.findOneAndDelete({
+      passenger: passengerId,
+      _id: tripId,
+    });
+    const past_trip = await pastpassengers.findOneAndDelete({
+      passenger: passengerId,
+      Booked_type: tripId,
+    });
+    if (!trip || !past_trip)
+      return res.status(404).json({ message: "not found" });
+
+    return res.status(200).json({ message: "trip cancelled by admin" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "something went wrong" });

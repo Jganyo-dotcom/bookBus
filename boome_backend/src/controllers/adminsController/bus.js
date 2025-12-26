@@ -195,6 +195,7 @@ const queryBus = async (req, res) => {
       "Driver",
       "name email"
     );
+
     if (!allbuses) {
       return res.status(404).json({ mesage: "bus not found" });
     }
