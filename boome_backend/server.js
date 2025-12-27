@@ -18,7 +18,6 @@ app.use(express.urlencoded({ extended: true })); // for forms
 app.use(express.json());
 
 init(server);
-app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "src/public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

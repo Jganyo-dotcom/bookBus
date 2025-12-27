@@ -732,11 +732,13 @@
       );
 
       socket.on("connect", () => {
+        console.log("Connected to server:", socket.id);
         const userId = localStorage.getItem("userId");
-        if (userId && !socket.hasJoined) {
-          socket.emit("joinRoom", userId);
-          socket.hasJoined = true;
-        }
+        console.log("userId from localStorage:", userId);
+        socket.emit("joinRoom", userId);
+      });
+      socket.on("connect_error", (err) => {
+        console.error("Connection error:", err);
       });
 
       // =======================

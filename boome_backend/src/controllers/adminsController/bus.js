@@ -115,68 +115,73 @@ const Bus_Boarding = async (req, res) => {
   const Bus_id = req.params.id;
   const { error, value } = validateBoardingBus.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
+
   try {
-    const existing_bus = await BusSchema.find({
-      _id: Bus_id,
-    });
-    // find bus no is existing
+    // check bus existence
+    const existing_bus = await BusSchema.findById(Bus_id);
     if (!existing_bus) {
-      return res.status(404).json({ mesage: "bus not found" });
+      return res.status(404).json({ message: "bus not found" });
     }
-    const UpdatedBooking = await booked_buses.find(
-      { Bus: Bus_id } // match by bus
-    );
-    if (!UpdatedBooking || UpdatedBooking.length === 0) {
-      return res.status(200).json({ message: "No bookings yet" });
+
+    // check bookings
+    const bookings = await booked_buses.find({ Bus: Bus_id });
+    if (!bookings || bookings.length === 0) {
+      return res.status(200).json({ message: "No bookings yet wai" });
     }
-    const Board = await pastpassengers.findByIdAndUpdate(Bus_id, value, {
-      new: true,
+
+    // update past passengers for this bus
+    await pastpassengers.updateMany({ Bus: Bus_id }, value, {
       runValidators: true,
     });
-    const updatedBooking = await booked_buses.findOneAndUpdate(
+
+    // update all confirmed bookings
+    await booked_buses.updateMany(
       { Bus: Bus_id, financial_Status: "confirmed" },
       value,
-      { new: true, runValidators: true }
+      { runValidators: true }
     );
 
-    //  emit socket event to this user only
-    console.log("Emitting bookingUpdated to user:", req.user.id);
-    console.log("Passenger id in booking:", updatedBooking.passenger);
-    console.log("Admin id from JWT:", req.user.id);
+    // re‑query the updated confirmed bookings so you can emit to each passenger
+    const updatedBookings = await booked_buses.find({
+      Bus: Bus_id,
+      financial_Status: "confirmed",
+    });
 
+    if (!updatedBookings || updatedBookings.length === 0) {
+      return res.status(200).json({ message: "none has paid yet" });
+    }
+
+    // emit socket events to each passenger and to the admin
     const io = getIO();
-    io.to(updatedBooking.passenger.toString()).emit(
-      "bookingUpdated",
-      updatedBooking
-    );
-    io.to(req.user.id.toString()).emit("bookingUpdated", updatedBooking);
+    updatedBookings.forEach((b) => {
+      if (b.passenger) {
+        io.to(b.passenger.toString()).emit("bookingUpdated", b);
+      }
+    });
+    io.to(req.user.id.toString()).emit("bookingUpdated", updatedBookings);
 
-    return res.status(200).json({ message: "Success" });
+    return res
+      .status(200)
+      .json({ message: "Success", bookings: updatedBookings });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "something went wrong okay" });
+    console.error(error);
+    return res.status(500).json({ message: "something went wrong" });
   }
 };
 
 const updateBus = async (req, res) => {
   const Bus_id = req.params.id;
+  console.log(Bus_id);
   const { error, value } = validateBoardingBus.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
   try {
-    const existing_bus = await booked_buses.find({ Bus: Bus_id });
-    const existing_Bus = await BusSchema.find({ Bus: Bus_id });
+    const existing_Bus = await BusSchema.findById(Bus_id);
     // find bus no is existing
-    if (!existing_bus) {
-      return res.status(404).json({ mesage: "bus not found" });
-    }
     if (!existing_Bus) {
       return res.status(404).json({ mesage: "bus not found" });
     }
-    const Board = await booked_buses.findOneAndUpdate(value, {
-      new: true,
-      runValidators: true,
-    });
-    const board = await BusSchema.findOneAndUpdate(value, {
+    console.log(existing_Bus);
+    const board = await BusSchema.findByIdAndUpdate(Bus_id, value, {
       new: true,
       runValidators: true,
     });

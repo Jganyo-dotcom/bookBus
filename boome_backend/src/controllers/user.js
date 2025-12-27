@@ -310,6 +310,8 @@ const BookBus = async (req, res) => {
       Booked_type: booking._id,
     });
     await pastP.save();
+    console.log(booking);
+    console.log(pastP);
 
     res.status(201).json({
       message: "Booking is awaiting payment to complete transaction",
@@ -326,23 +328,27 @@ const BookBus = async (req, res) => {
 const CancelBooking = async (req, res) => {
   const passengerId = req.user.id;
   const bookingId = req.params.bookingId;
+  console.log(bookingId);
   try {
-    const findBus = await bookedbusesSchema.findOne({
+    const past_findBus = await PastbookedBuses.findOne({
       _id: bookingId,
       passenger: passengerId,
     });
-    const past_findBus = await PastbookedBuses.findOne({
-      Bookin_type: bookingId,
+    const findBus = await bookedbusesSchema.findOne({
+      _id: past_findBus.Booked_type,
       passenger: passengerId,
     });
+    console.log(findBus);
+
+    console.log(past_findBus);
     if (!findBus && !past_findBus)
       return res.status(404).json({ message: "booking not found" });
     const cancelledBus = await bookedbusesSchema.findOneAndDelete({
-      _id: bookingId,
+      _id: past_findBus.Booked_type,
       passenger: passengerId,
     });
     const past_cancelledBus = await PastbookedBuses.findOneAndDelete({
-      Booked_type: bookingId,
+      _id: bookingId,
       passenger: passengerId,
     });
     res.status(200).json({ messagee: "Ride is deleted" });
@@ -366,7 +372,14 @@ const payment = async (req, res) => {
     }
 
     // find booking
-    const bus = await bookedbusesSchema.findById(bookingId);
+    const pastBus = await PastbookedBuses.findOne({
+      _id: bookingId,
+      passenger: req.user.id,
+    });
+    const bus = await bookedbusesSchema.findOne({
+      _id: pastBus.Booked_type,
+      passenger: req.user.id,
+    });
     if (!bus) return res.status(404).json({ message: "Booking not found" });
 
     // check price and passenger
@@ -376,7 +389,7 @@ const payment = async (req, res) => {
     ) {
       // update booking
       const updatedBooking = await bookedbusesSchema.findByIdAndUpdate(
-        bookingId,
+        pastBus.Booked_type,
         { financial_Status: "confirmed" },
         { new: true }
       );
