@@ -130,9 +130,10 @@ const Bus_Boarding = async (req, res) => {
     }
 
     // update past passengers for this bus
-    await pastpassengers.updateMany({ Bus: Bus_id }, value, {
+    const test = await pastpassengers.updateMany({ Bus: Bus_id }, value, {
       runValidators: true,
     });
+    console.log(test);
 
     // update all confirmed bookings
     await booked_buses.updateMany(

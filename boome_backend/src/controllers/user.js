@@ -236,6 +236,7 @@ const MyBookings = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
+    console.log(pastBookings);
 
     const pastCount = await PastbookedBuses.countDocuments({
       passenger: req.user.id,
@@ -372,10 +373,12 @@ const payment = async (req, res) => {
     }
 
     // find booking
-    const pastBus = await PastbookedBuses.findOne({
-      _id: bookingId,
-      passenger: req.user.id,
-    });
+    const pastBus = await PastbookedBuses.findOneAndUpdate(
+      { _id: bookingId, passenger: req.user.id }, // filter
+      { financial_Status: "confirmed" }, // update
+      { new: true } // options
+    );
+
     const bus = await bookedbusesSchema.findOne({
       _id: pastBus.Booked_type,
       passenger: req.user.id,
@@ -396,6 +399,7 @@ const payment = async (req, res) => {
 
       // update past bookings
       const associatedBus = await BusSchema.findById(bus.Bus);
+
       const updatethem = await PastbookedBuses.findOneAndUpdate(
         { bus_no: bus.bus_no, passenger: req.user.id },
         {
@@ -414,6 +418,7 @@ const payment = async (req, res) => {
         },
         { new: true }
       );
+      console.log("its this", updateMe);
 
       return res.status(200).json({
         message: `Payment of ${value.price} confirmed for Elikem Transport`,
