@@ -129,6 +129,10 @@ const Bus_Boarding = async (req, res) => {
       return res.status(200).json({ message: "No bookings yet wai" });
     }
 
+    const bus_primier = await BusSchema.findByIdAndUpdate(Bus_id, value, {
+      runValidators: true,
+      new: true,
+    });
 
     // update past passengers for this bus
     const test = await pastpassengers.updateMany({ Bus: Bus_id }, value, {
